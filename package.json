@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "eslint . && prettier --check .",
     "preview": "vite preview",
     "prepare": "husky",
     "test": "echo \"No tests yet\""
@@ -37,6 +37,10 @@
     "vite": "^7.0.4"
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,css,scss,html}": "prettier --write"
   }
 }
