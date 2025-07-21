@@ -52,7 +52,7 @@ export default function TicketSubmission() {
     <div
       style={{
         padding: '20px',
-        backgroundColor: '#f5f5f5',
+        backgroundColor: 'white',
         minHeight: '100vh',
       }}
     >
@@ -79,9 +79,9 @@ export default function TicketSubmission() {
               marginBottom: '20px',
               fontSize: '24px',
               fontWeight: 'bold',
-              color: '#000',
+              color: 'black',
               textAlign: 'center',
-              borderBottom: '2px solid #333',
+              borderBottom: '2px solid black',
               paddingBottom: '10px',
             }}
           >
@@ -94,7 +94,7 @@ export default function TicketSubmission() {
               display: 'flex',
               justifyContent: 'space-between',
               fontWeight: 'bold',
-              borderBottom: '1px solid #ccc',
+              borderBottom: '1px solid gray',
               paddingBottom: '5px',
             }}
           >
@@ -154,9 +154,9 @@ export default function TicketSubmission() {
               marginBottom: '30px',
               fontSize: '32px',
               fontWeight: 'bold',
-              color: '#000',
+              color: 'black',
               textAlign: 'center',
-              borderBottom: '3px solid #007bff',
+              borderBottom: '3px solid blue',
               paddingBottom: '15px',
             }}
           >
@@ -172,7 +172,7 @@ export default function TicketSubmission() {
                   marginBottom: '8px',
                   fontWeight: 'bold',
                   fontSize: '16px',
-                  color: '#333',
+                  color: 'black',
                 }}
               >
                 Issue Title
@@ -186,7 +186,7 @@ export default function TicketSubmission() {
                 style={{
                   width: '100%',
                   padding: '10px',
-                  backgroundColor: '#f0f0f0',
+                  backgroundColor: 'lightgray',
                   border: 'none',
                   borderRadius: '5px',
                   fontSize: '14px',
@@ -203,7 +203,7 @@ export default function TicketSubmission() {
                   marginBottom: '8px',
                   fontWeight: 'bold',
                   fontSize: '16px',
-                  color: '#333',
+                  color: 'black',
                 }}
               >
                 Category
@@ -214,7 +214,7 @@ export default function TicketSubmission() {
                 style={{
                   width: '100%',
                   padding: '10px',
-                  backgroundColor: '#f0f0f0',
+                  backgroundColor: 'lightgray',
                   border: 'none',
                   borderRadius: '5px',
                   fontSize: '14px',
@@ -238,7 +238,7 @@ export default function TicketSubmission() {
                   marginBottom: '8px',
                   fontWeight: 'bold',
                   fontSize: '16px',
-                  color: '#333',
+                  color: 'black',
                 }}
               >
                 Location
@@ -249,7 +249,7 @@ export default function TicketSubmission() {
                 style={{
                   width: '100%',
                   padding: '10px',
-                  backgroundColor: '#f0f0f0',
+                  backgroundColor: 'lightgray',
                   border: 'none',
                   borderRadius: '5px',
                   fontSize: '14px',
@@ -273,7 +273,7 @@ export default function TicketSubmission() {
                   marginBottom: '8px',
                   fontWeight: 'bold',
                   fontSize: '16px',
-                  color: '#333',
+                  color: 'black',
                 }}
               >
                 Description
@@ -287,7 +287,7 @@ export default function TicketSubmission() {
                 style={{
                   width: '100%',
                   padding: '10px',
-                  backgroundColor: '#f0f0f0',
+                  backgroundColor: 'white',
                   border: 'none',
                   borderRadius: '5px',
                   fontSize: '14px',
@@ -305,7 +305,7 @@ export default function TicketSubmission() {
                   marginBottom: '8px',
                   fontWeight: 'bold',
                   fontSize: '16px',
-                  color: '#333',
+                  color: 'black',
                 }}
               >
                 Photo (Optional)
@@ -316,7 +316,7 @@ export default function TicketSubmission() {
                 onChange={handlePhotoChange}
                 style={{
                   padding: '10px',
-                  backgroundColor: '#f0f0f0',
+                  backgroundColor: 'lightgray',
                   borderRadius: '5px',
                   border: 'none',
                 }}
@@ -335,7 +335,7 @@ export default function TicketSubmission() {
               type="submit"
               style={{
                 padding: '12px 24px',
-                backgroundColor: '#007bff',
+                backgroundColor: 'blue',
                 color: 'white',
                 border: 'none',
                 borderRadius: '5px',
