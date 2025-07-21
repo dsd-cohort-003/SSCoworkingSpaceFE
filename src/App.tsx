@@ -1,5 +1,5 @@
 import { useState } from 'react';
-
+import MaintanenceTicketing from './MaintanenceTicketing';
 import './App.css';
 
 function App() {
@@ -19,6 +19,8 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+
+      <MaintanenceTicketing />
     </>
   );
 }
