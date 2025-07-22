@@ -1,25 +1,28 @@
-import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import './App.css';
+import BillingPage from './page/BillingPage';
+// import type { Router, Routes, Route } from 'react-router-dom';
 
 function App() {
-  const [count, setCount] = useState(0);
+  // Placeholder components for incomplete pages
+  const OfficeSpacePage = () => <div>Office Space Page (Coming Soon)</div>;
+  const ReserveResourcesPage = () => (
+    <div>Reserve Resources Page (Coming Soon)</div>
+  );
+  const ReturnResourcesPage = () => (
+    <div>Return Resources Page (Coming Soon)</div>
+  );
 
   return (
-    <>
-      <h1>Testing</h1>
-      <div className="text-3xl text-red-500">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<BillingPage />} />
+        <Route path="/office-space" element={<OfficeSpacePage />} />
+        <Route path="/reserve-resources" element={<ReserveResourcesPage />} />
+        <Route path="/return-resources" element={<ReturnResourcesPage />} />
+      </Routes>
+    </Router>
   );
 }
 
