@@ -1,4 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import {
+  maintenanceApi,
+  type MaintenanceTicket,
+} from './services/maintenanceApi';
 
 interface TicketData {
   issueTitle: string;
@@ -28,6 +32,34 @@ export default function TicketSubmission() {
     description: '',
   });
 
+  const [existingTickets, setExistingTickets] = useState<MaintenanceTicket[]>(
+    [],
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch existing tickets on component mount
+  useEffect(() => {
+    const fetchTickets = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const tickets = await maintenanceApi.getAllTickets();
+        setExistingTickets(tickets);
+      } catch (err) {
+        setError(
+          'Failed to load tickets. Please check if the backend is running.',
+        );
+        console.error('Error fetching tickets:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTickets();
+  }, []);
+
   const handleInputChange = (field: keyof TicketData, value: string | File) => {
     setTicketData((prev) => ({
       ...prev,
@@ -42,10 +74,58 @@ export default function TicketSubmission() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Ticket submitted:', ticketData);
-    alert('Ticket submitted successfully!');
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      // Create ticket object for API (excluding photo for now)
+      const newTicket = {
+        issueTitle: ticketData.issueTitle,
+        category: ticketData.category,
+        location: ticketData.location,
+        description: ticketData.description,
+        // Note: Photo upload would need additional handling for file storage
+      };
+
+      const createdTicket = await maintenanceApi.createTicket(newTicket);
+
+      // Add the new ticket to the existing tickets list
+      setExistingTickets((prev) => [createdTicket, ...prev]);
+
+      // Reset form
+      setTicketData({
+        issueTitle: '',
+        category: '',
+        location: '',
+        description: '',
+      });
+
+      alert('Ticket submitted successfully!');
+    } catch (err) {
+      setError('Failed to submit ticket. Please try again.');
+      console.error('Error creating ticket:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'open':
+        return 'green';
+      case 'in_progress':
+        return 'orange';
+      case 'resolved':
+        return 'gray';
+      default:
+        return 'black';
+    }
   };
 
   return (
@@ -56,6 +136,21 @@ export default function TicketSubmission() {
         minHeight: '100vh',
       }}
     >
+      {error && (
+        <div
+          style={{
+            backgroundColor: '#fee',
+            color: '#c00',
+            padding: '10px',
+            borderRadius: '4px',
+            marginBottom: '20px',
+            textAlign: 'center',
+          }}
+        >
+          {error}
+        </div>
+      )}
+
       <div
         style={{
           display: 'flex',
@@ -103,41 +198,50 @@ export default function TicketSubmission() {
             <span>Created</span>
           </div>
 
-          <div
-            style={{
-              marginBottom: '8px',
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
-          >
-            <span>Test</span>
-            <span style={{ color: 'green' }}>Open</span>
-            <span>7/12/25</span>
-          </div>
-
-          <div
-            style={{
-              marginBottom: '8px',
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
-          >
-            <span>Test</span>
-            <span style={{ color: 'orange' }}>In Progress</span>
-            <span>7/12/25</span>
-          </div>
-
-          <div
-            style={{
-              marginBottom: '8px',
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
-          >
-            <span>Test</span>
-            <span style={{ color: 'gray' }}>Resolved</span>
-            <span>7/12/25</span>
-          </div>
+          {isLoading ? (
+            <div style={{ textAlign: 'center', padding: '20px' }}>
+              Loading tickets...
+            </div>
+          ) : existingTickets.length === 0 ? (
+            <div
+              style={{ textAlign: 'center', padding: '20px', color: 'gray' }}
+            >
+              No tickets found
+            </div>
+          ) : (
+            existingTickets.map((ticket) => (
+              <div
+                key={ticket.id}
+                style={{
+                  marginBottom: '8px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  fontSize: '14px',
+                }}
+              >
+                <span
+                  style={{
+                    maxWidth: '80px',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {ticket.issueTitle}
+                </span>
+                <span
+                  style={{
+                    color: getStatusColor(ticket.ticketProgress || 'open'),
+                  }}
+                >
+                  {ticket.ticketProgress || 'Open'}
+                </span>
+                <span style={{ fontSize: '12px' }}>
+                  {ticket.issueDate ? formatDate(ticket.issueDate) : 'N/A'}
+                </span>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Right side - Submit Ticket Form */}
@@ -185,12 +289,12 @@ export default function TicketSubmission() {
                 }
                 style={{
                   width: '100%',
-                  padding: '10px',
-                  backgroundColor: 'lightgray',
-                  border: 'none',
-                  borderRadius: '5px',
-                  fontSize: '14px',
+                  padding: '12px',
+                  border: '2px solid #ccc',
+                  borderRadius: '4px',
+                  fontSize: '16px',
                 }}
+                placeholder="Brief description of the issue"
                 required
               />
             </div>
@@ -213,11 +317,10 @@ export default function TicketSubmission() {
                 onChange={(e) => handleInputChange('category', e.target.value)}
                 style={{
                   width: '100%',
-                  padding: '10px',
-                  backgroundColor: 'lightgray',
-                  border: 'none',
-                  borderRadius: '5px',
-                  fontSize: '14px',
+                  padding: '12px',
+                  border: '2px solid #ccc',
+                  borderRadius: '4px',
+                  fontSize: '16px',
                 }}
                 required
               >
@@ -248,11 +351,10 @@ export default function TicketSubmission() {
                 onChange={(e) => handleInputChange('location', e.target.value)}
                 style={{
                   width: '100%',
-                  padding: '10px',
-                  backgroundColor: 'lightgray',
-                  border: 'none',
-                  borderRadius: '5px',
-                  fontSize: '14px',
+                  padding: '12px',
+                  border: '2px solid #ccc',
+                  borderRadius: '4px',
+                  fontSize: '16px',
                 }}
                 required
               >
@@ -283,16 +385,16 @@ export default function TicketSubmission() {
                 onChange={(e) =>
                   handleInputChange('description', e.target.value)
                 }
-                rows={4}
                 style={{
                   width: '100%',
-                  padding: '10px',
-                  backgroundColor: 'white',
-                  border: 'none',
-                  borderRadius: '5px',
-                  fontSize: '14px',
-                  resize: 'none',
+                  padding: '12px',
+                  border: '2px solid #ccc',
+                  borderRadius: '4px',
+                  fontSize: '16px',
+                  minHeight: '100px',
+                  resize: 'vertical',
                 }}
+                placeholder="Detailed description of the issue"
                 required
               />
             </div>
@@ -315,35 +417,31 @@ export default function TicketSubmission() {
                 accept="image/*"
                 onChange={handlePhotoChange}
                 style={{
-                  padding: '10px',
-                  backgroundColor: 'lightgray',
-                  borderRadius: '5px',
-                  border: 'none',
+                  width: '100%',
+                  padding: '12px',
+                  border: '2px solid #ccc',
+                  borderRadius: '4px',
+                  fontSize: '16px',
                 }}
               />
-              {ticketData.photo && (
-                <p
-                  style={{ marginTop: '5px', fontSize: '12px', color: 'gray' }}
-                >
-                  Selected: {ticketData.photo.name}
-                </p>
-              )}
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
               style={{
-                padding: '12px 24px',
-                backgroundColor: 'blue',
+                width: '100%',
+                padding: '15px',
+                backgroundColor: '#007bff',
                 color: 'white',
                 border: 'none',
-                borderRadius: '5px',
+                borderRadius: '4px',
                 fontSize: '16px',
                 cursor: 'pointer',
               }}
+              disabled={isSubmitting}
             >
-              Submit Ticket
+              {isSubmitting ? 'Submitting...' : 'Submit Ticket'}
             </button>
           </form>
         </div>

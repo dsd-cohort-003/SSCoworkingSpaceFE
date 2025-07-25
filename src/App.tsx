@@ -1,5 +1,4 @@
 import MaintenanceTicketing from './MaintenanceTicketing.tsx';
-import './App.css';
 import { Routes, Route } from 'react-router';
 import BookingLayout from './routes/booking/BookingLayout.tsx';
 import ChooseRoom from './routes/booking/ChooseRoom.tsx';
