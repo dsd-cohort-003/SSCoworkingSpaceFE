@@ -4,6 +4,7 @@ import { Spinner } from './Spinner';
 interface FullWidthImageProps {
   src: string;
   alt: string;
+  className?: string;
   srcSet?: string;
   sizes?: string;
 }
@@ -11,6 +12,7 @@ interface FullWidthImageProps {
 const FullWidthImage: React.FC<FullWidthImageProps> = ({
   src,
   alt,
+  className,
   srcSet,
   sizes,
 }) => {
@@ -37,7 +39,7 @@ const FullWidthImage: React.FC<FullWidthImageProps> = ({
           alt={alt}
           srcSet={srcSet}
           sizes={sizes}
-          className="w-full h-full object-cover"
+          className={`w-full h-full object-cover ${className}`}
           loading="lazy"
           onLoad={handleImageLoad}
           onError={handleImageError}
