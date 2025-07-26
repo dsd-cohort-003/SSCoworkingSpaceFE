@@ -1,3 +1,5 @@
+import OfficePage from './OfficeBookingPage/OfficePage';
+
 export default function ChooseRoom() {
-  return <h1>Choose A Room</h1>;
+  return <OfficePage></OfficePage>;
 }
