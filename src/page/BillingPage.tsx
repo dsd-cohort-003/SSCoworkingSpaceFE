@@ -1,148 +1,230 @@
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NavBar from '../component/NavBar';
-import { Button, Stack } from '@mui/material';
+import {
+  Button,
+  Stack,
+  Typography,
+  Link,
+  TextField,
+  Alert,
+} from '@mui/material';
+import {
+  confirmPayment,
+  fetchUnpaidBillingByUser,
+  processPayment,
+} from '@/api/service';
+import type { Billing } from '@/type/billing';
+import { useNavigate } from 'react-router-dom';
+
+const mockUserName = 'Alice';
+const userId = 6;
 
 const BillingPage: React.FC = () => {
+  const navigate = useNavigate();
+
   const [useCardOnFile, setUseCardOnFile] = useState(true);
-  const [checkedIn, setCheckedIn] = useState(false);
+  const [bills, setBills] = useState<Billing[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [paymentProcessing, setPaymentProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
-  const handlePayment = () => {
-    alert('Payment processed!');
+  // New card form fields
+  const [cardNumber, setCardNumber] = useState('');
+  const [expDate, setExpDate] = useState('');
+  const [cvc, setCvc] = useState('');
+
+  useEffect(() => {
+    async function fetchUnpaidBills() {
+      try {
+        setLoading(true);
+        // Assuming your API endpoint is: GET /api/billing/user/{userId}/unpaid and returns bills with office info
+        const data = await fetchUnpaidBillingByUser(userId);
+        console.log('Fetched billing data:', data);
+        setBills(data);
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          setError(e.message);
+        } else {
+          setError(String(e)); // fallback for non-Error throws
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchUnpaidBills();
+  }, []);
+
+  const totalAmount = bills.reduce((acc, bill) => acc + bill.total, 0);
+
+  const validateCard = () => {
+    if (useCardOnFile) return true;
+    if (
+      cardNumber.trim().length < 12 ||
+      !/^\d+$/.test(cardNumber) ||
+      !/^\d{2}\/\d{2}$/.test(expDate) ||
+      !/^\d{3,4}$/.test(cvc)
+    ) {
+      setError('Please enter valid credit card details.');
+      return false;
+    }
+    return true;
   };
 
-  const handleCheckInOut = () => {
-    setCheckedIn(!checkedIn);
+  const handlePayment = async () => {
+    setError(null);
+    if (!validateCard()) return;
+
+    setPaymentProcessing(true);
+    try {
+      const billIds = bills.map((b) => b.id);
+      // Mark all unpaid bills as paid in sequence (for demo)
+      for (const billId of billIds) {
+        // Call your backend payment processing and confirmation endpoints
+        await processPayment(billId);
+        await confirmPayment(billId);
+      }
+      setSuccess(true);
+      const idsParam = billIds.join(',');
+      navigate(`/payment-confirmation?billIds=${idsParam}`);
+    } catch {
+      setError('Payment failed. Please try again.');
+    } finally {
+      setPaymentProcessing(false);
+    }
   };
+
+  if (loading) return <div>Loading...</div>;
+
+  if (success) {
+    return (
+      <>
+        <NavBar />
+        <Stack padding="2rem" alignItems="center" spacing={2}>
+          <Typography variant="h4" color="primary">
+            Thank you, your payment has been confirmed!
+          </Typography>
+        </Stack>
+      </>
+    );
+  }
 
   return (
     <>
       <NavBar />
       <Stack
-        direction="row"
+        direction="column"
         spacing={2}
-        style={{ padding: '2rem' }}
-        alignContent="center"
-        justifyContent="center"
+        style={{ padding: '2rem', maxWidth: 600, margin: 'auto' }}
       >
-        <div style={{ padding: '2rem', minWidth: 300 }}>
-          <div>First Name</div>
-          <input
-            type="text"
-            placeholder="First Name..."
-            style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
-          />
-          <div>Last Name</div>
-          <input
-            type="text"
-            placeholder="Last Name..."
-            style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
-          />
-          <div>Confirmation number</div>
-          <input
-            type="text"
-            placeholder="Enter Confirmation Number..."
-            style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
-          />
-          <Stack direction="column" spacing={2} style={{ marginTop: '1rem' }}>
-            <Button onClick={() => alert('Search')}>Search</Button>
-            <Button onClick={() => alert('Check In')}>Check In</Button>
-            <Button onClick={() => alert('Check Out')}>Check Out</Button>
-          </Stack>
+        <Typography variant="h5">{mockUserName}'s Bills</Typography>
+
+        {bills.length === 0 ? (
+          <Typography>No unpaid bills so far!</Typography>
+        ) : (
+          <>
+            {bills.map((bill, idx) => {
+              console.log(`Rendering bill[${idx}]`, bill);
+              const start = new Date(
+                bill.reservation.startDate,
+              ).toLocaleString();
+              const end = new Date(bill.reservation.endDate).toLocaleString();
+
+              return (
+                <div
+                  key={bill.id}
+                  style={{
+                    border: '1px solid #ccc',
+                    padding: '1rem',
+                    borderRadius: 8,
+                  }}
+                >
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    {bill.reservation.office.name}
+                  </Typography>
+                  <Typography>Start: {start}</Typography>
+                  <Typography>End: {end}</Typography>
+                  <Typography>
+                    Rate: ${bill.reservation.office.price.toFixed(2)}
+                  </Typography>
+                  <Typography>Invoice: ${bill.total.toFixed(2)}</Typography>
+                </div>
+              );
+            })}
+            <Typography variant="h6" textAlign="right" marginTop="1rem">
+              Total amount due: ${totalAmount.toFixed(2)}
+            </Typography>
+          </>
+        )}
+
+        <div>
+          <Typography variant="h6">Payment Method</Typography>
+          <label>
+            <input
+              type="radio"
+              checked={useCardOnFile}
+              onChange={() => setUseCardOnFile(true)}
+            />{' '}
+            Use card on file (**** **** **** 1234)
+          </label>
+          <br />
+          <label>
+            <input
+              type="radio"
+              checked={!useCardOnFile}
+              onChange={() => setUseCardOnFile(false)}
+            />{' '}
+            Use new card
+          </label>
+
+          {!useCardOnFile && (
+            <div style={{ marginTop: '1rem' }}>
+              <TextField
+                label="Card Number"
+                variant="outlined"
+                fullWidth
+                margin="dense"
+                value={cardNumber}
+                onChange={(e) => setCardNumber(e.target.value)}
+              />
+              <TextField
+                label="Expiration (MM/YY)"
+                variant="outlined"
+                fullWidth
+                margin="dense"
+                value={expDate}
+                onChange={(e) => setExpDate(e.target.value)}
+              />
+              <TextField
+                label="CVC"
+                variant="outlined"
+                fullWidth
+                margin="dense"
+                value={cvc}
+                onChange={(e) => setCvc(e.target.value)}
+              />
+            </div>
+          )}
         </div>
 
-        <div style={{ padding: '2rem', minWidth: 350 }}>
-          <h2>Billing Details</h2>
-          <div style={{ marginBottom: '1rem' }}>
-            <p>
-              <strong>Check-in Date:</strong> 2025-07-20
-            </p>
-            <p>
-              <strong>Check-out Date:</strong> 2025-07-22
-            </p>
-            <p>
-              <strong>Estimated Price:</strong> $120.00
-            </p>
-            <p>
-              <strong>Actual Price:</strong> $140.00
-            </p>
-            <p>
-              <strong>Hours Booked:</strong> 18 hrs
-            </p>
-            <p>
-              <strong>Confirmation Number:</strong> ABC123456
-            </p>
-          </div>
+        {error && <Alert severity="error">{error}</Alert>}
 
-          <div style={{ marginBottom: '1rem' }}>
-            <h3>Payment Method</h3>
-            <label>
-              <input
-                type="radio"
-                checked={useCardOnFile}
-                onChange={() => setUseCardOnFile(true)}
-              />
-              Use card on file (**** **** **** 1234)
-            </label>
-            <br />
-            <label>
-              <input
-                type="radio"
-                checked={!useCardOnFile}
-                onChange={() => setUseCardOnFile(false)}
-              />
-              Use new card
-            </label>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handlePayment}
+          disabled={paymentProcessing || bills.length === 0}
+        >
+          {paymentProcessing ? 'Processing...' : 'Pay Now'}
+        </Button>
 
-            {!useCardOnFile && (
-              <div style={{ marginTop: '1rem' }}>
-                <input
-                  type="text"
-                  placeholder="Card Number"
-                  style={{
-                    display: 'block',
-                    marginBottom: '0.5rem',
-                    width: '100%',
-                  }}
-                />
-                <input
-                  type="text"
-                  placeholder="Expiration (MM/YY)"
-                  style={{
-                    display: 'block',
-                    marginBottom: '0.5rem',
-                    width: '100%',
-                  }}
-                />
-                <input
-                  type="text"
-                  placeholder="CVC"
-                  style={{
-                    display: 'block',
-                    marginBottom: '0.5rem',
-                    width: '100%',
-                  }}
-                />
-              </div>
-            )}
-          </div>
-
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handlePayment}
-            style={{ marginRight: '1rem' }}
-          >
-            Pay Now
-          </Button>
-
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={handleCheckInOut}
-          >
-            {checkedIn ? 'Check Out' : 'Check In'}
-          </Button>
-        </div>
+        <Link
+          href="#"
+          underline="hover"
+          style={{ marginTop: '1rem', textAlign: 'center' }}
+        >
+          Browse old bills
+        </Link>
       </Stack>
     </>
   );
