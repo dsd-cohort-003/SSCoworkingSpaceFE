@@ -1,4 +1,5 @@
+import Resources from '@/components/booking/Resources';
 function ChooseDesk() {
-  return <h1>Choose Desk</h1>;
+  return <Resources />;
 }
 export default ChooseDesk;
