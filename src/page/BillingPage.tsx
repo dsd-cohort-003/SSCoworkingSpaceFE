@@ -17,7 +17,7 @@ import type { Billing } from '@/type/billing';
 import { useNavigate } from 'react-router-dom';
 
 const mockUserName = 'Alice';
-const userId = 6;
+const userId = 1;
 
 const BillingPage: React.FC = () => {
   const navigate = useNavigate();
