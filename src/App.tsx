@@ -8,6 +8,8 @@ import Maintenance from './routes/Maintenance.tsx';
 import Resources from './routes/Resources.tsx';
 import MainLayout from './layout/MainLayout.tsx';
 import LogIn from './routes/LogIn.tsx';
+import BillingPage from './page/BillingPage.tsx';
+import PaymentConfirmation from './page/PaymentConfirmation.tsx';
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
         </Route>
         <Route path="maintenance" element={<Maintenance />} />
         <Route path="resources" element={<Resources />} />
+        <Route path="billing" element={<BillingPage />} />
+        <Route path="payment-confirmation" element={<PaymentConfirmation />} />
       </Route>
     </Routes>
   );
