@@ -1,11 +1,11 @@
+import PageTitle from '@/components/Text/PageTitle';
 import { Outlet } from 'react-router';
 
-function BookingLayout() {
+export default function BookingLayout() {
   return (
     <>
-      <h1>Booking Layout</h1>
+      <PageTitle text="Book Here" />
       <Outlet />
     </>
   );
 }
-export default BookingLayout;
