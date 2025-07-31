@@ -1,73 +1,63 @@
+<<<<<<< HEAD
+
 # React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+=======
 
 # SSCoworkingSpaceFE
 
 Frontend repository for coworking Space Project for DSD Group
+
+> > > > > > > bf790158d26ed0969793df227a05c6115cd8c0bd
+
+## Setup
+
+### Prerequisites:
+
+Make sure you have **Node.js** installed. You can check with:
+
+```bash
+node -v
+```
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+<<<<<<< HEAD
+
+# SSCoworkingSpaceFE
+
+# Frontend repository for coworking Space Project for DSD Group
+
+### 2. Start development server
+
+```bash
+npm run dev
+```
+
+This should run on `http://localhost:5173/`. Open this in your web browser.
+
+### ...or build production server
+
+```bash
+npm run build
+```
+
+Then you would copy the build files (in `dist/`) to where you want them to go on your server (e.g. **nginx**). You can test the production build via:
+
+```bash
+npm run preview
+```
+
+which should run on `http://localhost:4173/`.
+
+### 3. PR Standards
+
+Include Type of change, Short Description, and Jira Ticket number in the title. In the description include a summary of the change, testing evidence
+
+EG: Feature: Add retrieve office endpoint SCRUM-34
+
+> > > > > > > bf790158d26ed0969793df227a05c6115cd8c0bd

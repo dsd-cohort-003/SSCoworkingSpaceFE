@@ -1,26 +1,40 @@
-import { useState } from 'react'
-
-import './App.css'
+import { Routes, Route } from 'react-router';
+import BookingLayout from './routes/booking/BookingLayout.tsx';
+import ChooseRoom from './routes/booking/ChooseRoom.tsx';
+import ChooseDesk from './routes/booking/ChooseDesk.tsx';
+import BookingConfirmation from './routes/booking/BookingConfirmation.tsx';
+import Landing from './routes/Landing.tsx';
+import Maintenance from './routes/Maintenance.tsx';
+import Resources from './routes/Resources.tsx';
+import MainLayout from './layout/MainLayout.tsx';
+import LogIn from './routes/LogIn.tsx';
+import BillingPage from './page/BillingPage.tsx';
+import PaymentConfirmation from './page/PaymentConfirmation.tsx';
+import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <h1>Vite + React</h1>
-      <div className="text-3xl text-red-500">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <AuthProvider>
+      <Routes>
+        <Route element={<MainLayout />}>
+          <Route index element={<Landing />} />
+          <Route path="Login" element={<LogIn />} />
+          <Route path="booking" element={<BookingLayout />}>
+            <Route path="rooms" element={<ChooseRoom />} />
+            <Route path="desks" element={<ChooseDesk />} />
+            <Route path="confirmation" element={<BookingConfirmation />} />
+          </Route>
+          <Route path="maintenance" element={<Maintenance />} />
+          <Route path="resources" element={<Resources />} />
+          <Route path="billing" element={<BillingPage />} />
+          <Route
+            path="payment-confirmation"
+            element={<PaymentConfirmation />}
+          />
+        </Route>
+      </Routes>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
