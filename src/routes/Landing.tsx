@@ -36,7 +36,7 @@ export default function Landing() {
             <div className="lg:col-span-2">
               <div className="relative h-96 lg:h-[500px] bg-gray-100 rounded-lg overflow-hidden group">
                 <img
-                  src={LABELS.IMAGES._WORKSPACE.SRC}
+                  src={LABELS.IMAGES.MAIN_WORKSPACE.SRC}
                   alt={LABELS.IMAGES.MAIN_WORKSPACE.ALT}
                   className="absolute inset-0 w-full h-full object-cover"
                 />
