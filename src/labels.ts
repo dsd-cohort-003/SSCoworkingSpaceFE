@@ -230,4 +230,20 @@ export const LABELS = {
       RESERVED: 'Reserved',
     },
   },
+
+  AUTH: {
+    LOGIN_MODAL: {
+      TITLE: 'Welcome Back',
+      SUBTITLE: 'Sign in to your DSD account',
+      EMAIL_LABEL: 'Email',
+      EMAIL_PLACEHOLDER: 'Enter your email',
+      PASSWORD_LABEL: 'Password',
+      PASSWORD_PLACEHOLDER: 'Enter your password',
+      LOADING_TEXT: 'Signing in...',
+      ERROR_MESSAGE: 'Invalid email or password. Try demo@dsd.com / demo123',
+      DEMO_CREDENTIALS_TEXT: 'Demo credentials:',
+      DEMO_CREDENTIALS_VALUE: 'demo@dsd.com / demo123',
+      CLOSE_BUTTON: '×',
+    },
+  },
 } as const;

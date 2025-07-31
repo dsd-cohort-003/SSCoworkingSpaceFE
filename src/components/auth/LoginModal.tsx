@@ -25,7 +25,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       setEmail('');
       setPassword('');
     } else {
-      setError('Invalid email or password. Try demo@dsd.com / demo123');
+      setError(LABELS.AUTH.LOGIN_MODAL.ERROR_MESSAGE);
     }
   };
 
@@ -45,14 +45,14 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl"
         >
-          ×
+          {LABELS.AUTH.LOGIN_MODAL.CLOSE_BUTTON}
         </button>
 
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-[#2F4858] mb-2">
-            Welcome Back
+            {LABELS.AUTH.LOGIN_MODAL.TITLE}
           </h2>
-          <p className="text-gray-600">Sign in to your DSD account</p>
+          <p className="text-gray-600">{LABELS.AUTH.LOGIN_MODAL.SUBTITLE}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -61,7 +61,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               htmlFor="email"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Email
+              {LABELS.AUTH.LOGIN_MODAL.EMAIL_LABEL}
             </label>
             <input
               type="email"
@@ -69,7 +69,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4ECDC4] focus:border-transparent outline-none transition-all"
-              placeholder="Enter your email"
+              placeholder={LABELS.AUTH.LOGIN_MODAL.EMAIL_PLACEHOLDER}
               required
             />
           </div>
@@ -79,7 +79,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               htmlFor="password"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Password
+              {LABELS.AUTH.LOGIN_MODAL.PASSWORD_LABEL}
             </label>
             <input
               type="password"
@@ -87,7 +87,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4ECDC4] focus:border-transparent outline-none transition-all"
-              placeholder="Enter your password"
+              placeholder={LABELS.AUTH.LOGIN_MODAL.PASSWORD_PLACEHOLDER}
               required
             />
           </div>
@@ -103,15 +103,17 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             disabled={isLoading}
             className="w-full bg-[#1A535C] text-white py-3 rounded-lg hover:bg-[#1A535C]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
           >
-            {isLoading ? 'Signing in...' : LABELS.NAVIGATION.LOGIN}
+            {isLoading
+              ? LABELS.AUTH.LOGIN_MODAL.LOADING_TEXT
+              : LABELS.NAVIGATION.LOGIN}
           </button>
         </form>
 
         <div className="mt-6 pt-6 border-t border-gray-200 text-center">
           <p className="text-sm text-gray-600">
-            Demo credentials:{' '}
+            {LABELS.AUTH.LOGIN_MODAL.DEMO_CREDENTIALS_TEXT}{' '}
             <span className="font-mono text-[#1A535C]">
-              demo@dsd.com / demo123
+              {LABELS.AUTH.LOGIN_MODAL.DEMO_CREDENTIALS_VALUE}
             </span>
           </p>
         </div>
