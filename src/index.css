@@ -46,7 +46,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-nav a.active {
+nav a.active:not(.brand-logo) {
   font-weight: bold;
   text-decoration: underline;
   color: #4f46e5;
