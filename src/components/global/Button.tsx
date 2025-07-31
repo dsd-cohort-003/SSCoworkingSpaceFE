@@ -10,7 +10,7 @@ const colorMap = {
 function Button({ text, onClick, color }: ButtonProps) {
   return (
     <button
-      className={`${colorMap[color]} w-full px-4 py-2 rounded-lg focus:outline-none focus:ring transition-all text-white`}
+      className={`${colorMap[color]} w-full max-w-[250px] px-4 py-2 rounded-lg focus:outline-none focus:ring transition-all text-white`}
       onClick={onClick}
     >
       {text}

@@ -5,6 +5,7 @@ export default function Landing() {
   const navigate = useNavigate();
 
   return (
+
     <div className="min-h-screen bg-white">
       <section className="pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-6">
@@ -29,6 +30,7 @@ export default function Landing() {
               >
                 {LABELS.HERO.CTA_SECONDARY}
               </button>
+              
             </div>
           </div>
 
@@ -36,7 +38,9 @@ export default function Landing() {
             <div className="lg:col-span-2">
               <div className="relative h-96 lg:h-[500px] bg-gray-100 rounded-lg overflow-hidden group">
                 <img
-                  src={LABELS.IMAGES.MAIN_WORKSPACE.SRC}
+                  src={LABELS.IMAGES.
+                  
+                  _WORKSPACE.SRC}
                   alt={LABELS.IMAGES.MAIN_WORKSPACE.ALT}
                   className="absolute inset-0 w-full h-full object-cover"
                 />
@@ -100,6 +104,7 @@ export default function Landing() {
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>

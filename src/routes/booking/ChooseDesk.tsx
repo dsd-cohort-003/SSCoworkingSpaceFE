@@ -1,3 +1,4 @@
+
 import PageTitle from '@/components/Text/PageTitle';
 import DateRangePicker from '@/components/booking/DateRangePicker';
 import BookingSummary from '@/components/booking/BookingSummary';
@@ -93,6 +94,7 @@ function ChooseDesk() {
       </div>
     </div>
   );
+
 }
 
 export default ChooseDesk;
