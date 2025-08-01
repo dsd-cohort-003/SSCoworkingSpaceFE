@@ -45,7 +45,9 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 }
-
+body:has(nav[data-state='open']) {
+  overflow: hidden;
+}
 nav a.active:not(.brand-logo) {
   font-weight: bold;
   text-decoration: underline;
