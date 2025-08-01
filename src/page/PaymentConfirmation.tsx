@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import NavBar from '../component/NavBar';
 import { useSearchParams } from 'react-router';
-import { fetchBillingById } from '@/api/service';
+import { fetchBillingById } from '@/api/billingService';
 import type { Billing } from '@/type/billing';
 
 const PaymentConfirmation: React.FC = () => {
