@@ -26,7 +26,7 @@ export default function Header() {
           }}
           className="text-gray-600 hover:text-gray-900 transition-colors"
         >
-          {LABELS.NAVIGATION.RESERVE_RESOURCES}
+          {LABELS.NAVIGATION.CONTACT}
         </a>
 
         <button
@@ -50,7 +50,7 @@ export default function Header() {
     );
 
     return (
-      <>
+      <header>
         <nav
           className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50"
           data-state={isOpen ? 'open' : 'closed'}
@@ -83,7 +83,7 @@ export default function Header() {
           isOpen={showLoginModal}
           onClose={() => setShowLoginModal(false)}
         />
-      </>
+      </header>
     );
   }
 }
