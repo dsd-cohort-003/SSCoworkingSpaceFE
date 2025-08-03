@@ -7,4 +7,5 @@ export interface Office {
   city: string;
   streetAddress: string;
   zipcode: string;
+  price: number;
 }
