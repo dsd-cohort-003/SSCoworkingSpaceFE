@@ -6,18 +6,31 @@ import {
   useEffect,
   type ReactNode,
 } from 'react';
+import { supabase } from '../lib/supabase';
 
 interface User {
   id: string;
-  name: string;
   email: string;
+  name?: string;
+  user_metadata?: Record<string, unknown>;
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  login: (
+    email: string,
+    password: string,
+  ) => Promise<{ success: boolean; error?: string }>;
+  signup: (
+    email: string,
+    password: string,
+    name?: string,
+  ) => Promise<{ success: boolean; error?: string }>;
+  logout: () => Promise<void>;
+  resetPassword: (
+    email: string,
+  ) => Promise<{ success: boolean; error?: string }>;
   isLoading: boolean;
 }
 
@@ -32,49 +45,141 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-    setIsLoading(false);
+    const getSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email || '',
+          name:
+            session.user.user_metadata?.name ||
+            session.user.user_metadata?.full_name,
+          user_metadata: session.user.user_metadata,
+        });
+      }
+      setIsLoading(false);
+    };
+
+    getSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_, session) => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email || '',
+          name:
+            session.user.user_metadata?.name ||
+            session.user.user_metadata?.full_name,
+          user_metadata: session.user.user_metadata,
+        });
+      } else {
+        setUser(null);
+      }
+      setIsLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (
+    email: string,
+    password: string,
+  ): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-      if (email === 'demo@dsd.com' && password === 'demo123') {
-        const userData = {
-          id: '1',
-          name: 'Demo User',
-          email: email,
-        };
-        setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
+      if (error) {
         setIsLoading(false);
-        return true;
+        return { success: false, error: error.message };
+      }
+
+      if (data.user) {
+        setUser({
+          id: data.user.id,
+          email: data.user.email || '',
+          name:
+            data.user.user_metadata?.name || data.user.user_metadata?.full_name,
+          user_metadata: data.user.user_metadata,
+        });
       }
 
       setIsLoading(false);
-      return false;
+      return { success: true };
     } catch {
       setIsLoading(false);
-      return false;
+      return { success: false, error: 'An unexpected error occurred' };
     }
   };
 
-  const logout = () => {
+  const signup = async (
+    email: string,
+    password: string,
+    name?: string,
+  ): Promise<{ success: boolean; error?: string }> => {
+    setIsLoading(true);
+
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name || '',
+            full_name: name || '',
+          },
+        },
+      });
+
+      if (error) {
+        setIsLoading(false);
+        return { success: false, error: error.message };
+      }
+
+      setIsLoading(false);
+      return { success: true };
+    } catch {
+      setIsLoading(false);
+      return { success: false, error: 'An unexpected error occurred' };
+    }
+  };
+
+  const logout = async (): Promise<void> => {
+    await supabase.auth.signOut();
     setUser(null);
-    localStorage.removeItem('user');
+  };
+
+  const resetPassword = async (
+    email: string,
+  ): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return { success: true };
+    } catch {
+      return { success: false, error: 'An unexpected error occurred' };
+    }
   };
 
   const value = {
     user,
     isAuthenticated: !!user,
     login,
+    signup,
     logout,
+    resetPassword,
     isLoading,
   };
 

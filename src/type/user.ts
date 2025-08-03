@@ -1,7 +1,6 @@
 export interface User {
-  id: number;
-  username: string;
+  id: string;
   email: string;
-  role: string; // e.g., "user", "admin"
-  createdAt: string; // ISO string
+  name?: string;
+  user_metadata?: Record<string, unknown>;
 }
