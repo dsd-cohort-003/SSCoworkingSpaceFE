@@ -1,53 +1,41 @@
 import FullWidthImage from '../FullWidthImage';
 import Button from '../global/Button';
 import Heading from '../Text/Heading';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../ui/card';
+import Card from '../ui/card';
+import { LABELS } from '@/constants/labels';
 
 function Resources() {
-  // const test = async () => {
-  //   const response = await fetch('https://jsonplaceholder.typicode.com/posts');
-  //   const data = await response.json();
-  //   console.log(data);
-  // }
   return (
     <Card>
       <Heading text="Rent Office Space" />
-      <Card>
-        <CardContent>
-          {/*To be pulled from DB: Img src, Alt */}
-          <CardContent>
-            <FullWidthImage src="/images/Grey.jpg" alt="Grey block" />
-          </CardContent>
-          <CardContent>
-            {/*Pull from DB: Card Title, may need some id for room to be passed into button fn */}
-            <CardHeader className="flex">
-              <CardTitle>Suite 100: DB</CardTitle>
+      <Card header={{ title: 'Suite 100: DB' }} className="mt-6">
+        <div className="space-y-4">
+          <FullWidthImage src="/images/Grey.jpg" alt="Grey block" />
 
-              <Button text="Reserve" onClick={() => {}} color="indigo" />
-            </CardHeader>
-            {/*Pull from DB: Size, Available date, Lease rate*/}
-            <CardDescription className="flex">
-              <div>
-                <p className="font-bold">Size</p>
-                <p>6000sqft: DB</p>
-              </div>
-              <div>
-                <p className="font-bold">Available</p>
-                <p>September 19, 2025: DB</p>
-              </div>
-              <div>
-                <p className="font-bold">Lease Rate</p>
-                <p>$USD: DB</p>
-              </div>
-            </CardDescription>
-          </CardContent>
-        </CardContent>
+          <div className="flex justify-between items-center">
+            <h3 className="text-xl font-semibold text-gray-900">
+              Suite 100: DB
+            </h3>
+            <Button text="Reserve" onClick={() => {}} color="indigo" />
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-200">
+            <div>
+              <p className="font-bold text-gray-900">Size</p>
+              <p className="text-gray-600">6000sqft: DB</p>
+            </div>
+            <div>
+              <p className="font-bold text-gray-900">
+                {LABELS.BOOKING.LABELS.AVAILABLE}
+              </p>
+              <p className="text-gray-600">September 19, 2025: DB</p>
+            </div>
+            <div>
+              <p className="font-bold text-gray-900">Lease Rate</p>
+              <p className="text-gray-600">$USD: DB</p>
+            </div>
+          </div>
+        </div>
       </Card>
     </Card>
   );
