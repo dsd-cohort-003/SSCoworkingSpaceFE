@@ -148,6 +148,25 @@ export const LABELS = {
     CHOOSE_ROOM: {
       PAGE_TITLE: 'Available Offices',
       SECTION_TITLE: 'Select an Office Location',
+      HERO_DESCRIPTION:
+        'Choose from our premium workspace locations in Dallas and Fort Worth. Each space is meticulously designed to inspire productivity, foster collaboration, and elevate your work experience.',
+      BREADCRUMB_HOME: 'Home',
+      BREADCRUMB_BOOKING: 'Booking',
+      BREADCRUMB_CHOOSE_LOCATION: 'Choose Location',
+      STATS_LOCATIONS: '2',
+      STATS_LOCATIONS_LABEL: 'Locations',
+      STATS_SQFT: '43K+',
+      STATS_SQFT_LABEL: 'Sq Ft',
+      STATS_ACCESS: '24/7',
+      STATS_ACCESS_LABEL: 'Access',
+      STEP_INDICATOR: 'Step 1 of 3: Choose Your Location',
+      SECTION_DESCRIPTION:
+        'Select the perfect location for your workspace needs. Each location offers unique amenities and is strategically positioned in prime business districts.',
+      HELP_SECTION_TITLE: 'Need Help Choosing?',
+      HELP_SECTION_DESCRIPTION:
+        'Our workspace consultants are here to help you find the perfect location based on your specific needs and preferences.',
+      SCHEDULE_TOUR_BUTTON: 'Schedule a Tour',
+      CONTACT_US_BUTTON: 'Contact Us',
       FLOOR_PLAN_PLACEHOLDER: 'FLOOR PLAN',
       SIZE_LABEL: 'Size',
       AVAILABLE_LABEL: 'Available',
@@ -227,6 +246,12 @@ export const LABELS = {
       AVAILABLE_LABEL: 'Available:',
       RESERVE_BUTTON: 'Reserve',
       FLOOR_PLAN_PLACEHOLDER: 'Floor Plan',
+      PREMIUM_WORKSPACE_BADGE: 'Premium Workspace',
+      DALLAS_FORT_WORTH_AREA: 'Dallas-Fort Worth Area',
+      PER_MONTH_LABEL: 'Per Month',
+      ACCESS_LABEL: 'Access',
+      ALL_INCLUSIVE_BADGE: 'All-Inclusive',
+      NO_HIDDEN_FEES: 'No hidden fees',
     },
     STATUS_BADGE: {
       AVAILABLE: 'Available Now',

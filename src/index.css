@@ -48,6 +48,32 @@
 body:has(nav[data-state='open']) {
   overflow: hidden;
 }
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #374151;
+  outline-offset: 2px;
+}
 nav a.active:not(.brand-logo) {
   font-weight: bold;
   text-decoration: underline;

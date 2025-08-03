@@ -33,7 +33,10 @@ export default function Landing() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-16">
-            <div className="lg:col-span-2">
+            <div
+              className="lg:col-span-2 animate-fade-in-up"
+              style={{ animationDelay: '200ms' }}
+            >
               <div className="relative h-96 lg:h-[500px] bg-gray-100 rounded-lg overflow-hidden group">
                 <img
                   src={LABELS.IMAGES.MAIN_WORKSPACE.SRC}
@@ -58,7 +61,10 @@ export default function Landing() {
               </div>
             </div>
             <div className="flex flex-col h-96 lg:h-[500px] gap-6">
-              <div className="relative flex-1 bg-gray-100 rounded-lg overflow-hidden group">
+              <div
+                className="relative flex-1 bg-gray-100 rounded-lg overflow-hidden group animate-fade-in-up"
+                style={{ animationDelay: '400ms' }}
+              >
                 <img
                   src={LABELS.IMAGES.MEETING_ROOM.SRC}
                   alt={LABELS.IMAGES.MEETING_ROOM.ALT}
@@ -77,7 +83,10 @@ export default function Landing() {
                   </p>
                 </div>
               </div>
-              <div className="relative flex-1 bg-gray-100 rounded-lg overflow-hidden group">
+              <div
+                className="relative flex-1 bg-gray-100 rounded-lg overflow-hidden group animate-fade-in-up"
+                style={{ animationDelay: '600ms' }}
+              >
                 <img
                   src={LABELS.IMAGES.PRIVATE_OFFICE.SRC}
                   alt={LABELS.IMAGES.PRIVATE_OFFICE.ALT}
@@ -134,11 +143,12 @@ export default function Landing() {
             ].map((option, index) => (
               <div
                 key={index}
-                className={`p-8 rounded-lg border-2 transition-all duration-300 ${
+                className={`p-8 rounded-lg border-2 transition-all duration-300 animate-fade-in-up ${
                   option.active
                     ? 'border-gray-900 bg-white shadow-lg'
                     : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
                 }`}
+                style={{ animationDelay: `${800 + index * 200}ms` }}
               >
                 <div className="flex items-center mb-4">
                   <div
@@ -184,10 +194,11 @@ export default function Landing() {
                 id: 'fortworth',
                 ...LABELS.LOCATIONS.FORT_WORTH,
               },
-            ].map((location) => (
+            ].map((location, index) => (
               <div
                 key={location.id}
-                className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-fade-in-up"
+                style={{ animationDelay: `${1400 + index * 200}ms` }}
               >
                 <div
                   className="h-64 flex items-center justify-center relative"
