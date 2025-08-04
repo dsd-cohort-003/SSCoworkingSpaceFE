@@ -1,9 +1,18 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 
+export interface CartItem {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  quantity: number;
+}
+
 export interface BookingData {
   location: string;
   fromDate: string;
   toDate: string;
+  resources?: CartItem[];
 }
 
 export interface LocationState {
