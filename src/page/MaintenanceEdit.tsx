@@ -107,6 +107,7 @@ export default function MaintenanceEdit() {
           boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
         }}
       >
+        <b>Title:</b>
         <input
           name="title"
           value={ticket.title ?? ''}
@@ -114,7 +115,7 @@ export default function MaintenanceEdit() {
           placeholder="Title"
           style={{ padding: 10, fontSize: 16 }}
         />
-
+        <b>Category:</b>
         <input
           name="category"
           value={ticket.category ?? ''}
@@ -122,7 +123,7 @@ export default function MaintenanceEdit() {
           placeholder="Category"
           style={{ padding: 10, fontSize: 16 }}
         />
-
+        <b>Location:</b>
         <input
           name="location"
           value={ticket.location ?? ''}
@@ -130,7 +131,7 @@ export default function MaintenanceEdit() {
           placeholder="Location"
           style={{ padding: 10, fontSize: 16 }}
         />
-
+        <b>Description:</b>
         <textarea
           name="description"
           value={ticket.description ?? ''}
@@ -187,20 +188,8 @@ export default function MaintenanceEdit() {
           </>
         ) : (
           <>
-            <input
-              name="status"
-              value={ticket.status ?? ''}
-              readOnly
-              placeholder="Status (view only)"
-              style={{ padding: 10, fontSize: 16, backgroundColor: '#eee' }}
-            />
-            <input
-              name="assignees"
-              value={ticket.assignees ?? ''}
-              readOnly
-              placeholder="Assignee (view only)"
-              style={{ padding: 10, fontSize: 16, backgroundColor: '#eee' }}
-            />
+            <b>Status:</b>
+            <p>{ticket.status ?? ''}</p>
           </>
         )}
 

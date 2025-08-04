@@ -1,9 +1,11 @@
+import { uploadImage } from '@/api/imageService';
 import { createTicket, fetchTicketsByUser } from '@/api/maintenanceService';
 import type {
   MaintenanceTicket,
   MaintenanceTicketDTO,
 } from '@/type/maintenanceTicket';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 
 const TEMP_USER_ID = 1;
 
@@ -30,10 +32,11 @@ export default function MaintenanceSubmit() {
     description: '',
     image: '',
   });
-
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [tickets, setTickets] = useState<MaintenanceTicket[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const load = async () => {
@@ -41,7 +44,7 @@ export default function MaintenanceSubmit() {
         const userTickets = await fetchTicketsByUser(TEMP_USER_ID);
         setTickets(userTickets);
       } catch (err) {
-        console.log(err);
+        console.error(err);
         setError('Failed to load user tickets');
       }
     };
@@ -52,21 +55,18 @@ export default function MaintenanceSubmit() {
     e.preventDefault();
     setError(null);
 
-    if (!formData.title.trim()) {
-      setError('Title is required.');
-      return;
-    }
-    if (!formData.category) {
-      setError('Category is required.');
-      return;
-    }
-    if (!formData.location) {
-      setError('Location is required.');
-      return;
-    }
+    if (!formData.title.trim()) return setError('Title is required.');
+    if (!formData.category) return setError('Category is required.');
+    if (!formData.location) return setError('Location is required.');
 
     setSubmitting(true);
+
     try {
+      let imageUrl = '';
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile);
+      }
+
       const ticket: MaintenanceTicketDTO = {
         title: formData.title,
         category: formData.category,
@@ -74,8 +74,9 @@ export default function MaintenanceSubmit() {
         description: formData.description,
         userId: TEMP_USER_ID,
         status: 'open',
-        image: formData.image || '',
+        image: imageUrl,
       };
+
       const created = await createTicket(ticket);
       setTickets((prev) => [created, ...prev]);
       setFormData({
@@ -85,9 +86,10 @@ export default function MaintenanceSubmit() {
         description: '',
         image: '',
       });
+      setImageFile(null);
       alert('Ticket submitted successfully');
     } catch (err) {
-      console.log(err);
+      console.error(err);
       setError('Failed to submit');
     } finally {
       setSubmitting(false);
@@ -96,10 +98,16 @@ export default function MaintenanceSubmit() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setFormData((prev) => ({ ...prev, image: file.name }));
-      console.log(formData.image);
+    if (file && ['image/jpeg', 'image/png'].includes(file.type)) {
+      setImageFile(file);
+    } else {
+      setImageFile(null);
+      setError('Only PNG or JPEG images are allowed.');
     }
+  };
+
+  const handleEdit = (id: number) => {
+    navigate(`/maintenance/edit/${id}`);
   };
 
   return (
@@ -160,8 +168,17 @@ export default function MaintenanceSubmit() {
           rows={4}
           style={{ padding: 10, fontSize: 16 }}
         />
-        <input type="file" onChange={handleFileChange} />
-        {formData.image && <small>Selected file: {formData.image}</small>}
+        <input
+          type="file"
+          accept="image/png, image/jpeg"
+          onChange={handleFileChange}
+        />
+        {imageFile && (
+          <small>
+            Selected file: {imageFile.name} (
+            {(imageFile.size / 1024).toFixed(1)} KB)
+          </small>
+        )}
         <button
           type="submit"
           disabled={submitting}
@@ -180,7 +197,10 @@ export default function MaintenanceSubmit() {
         <ul style={{ paddingLeft: 20 }}>
           {tickets.map((t) => (
             <li key={t.id}>
-              <strong>{t.title}</strong> - {t.status}
+              <p>
+                <strong>{t.title}</strong> - {t.status}
+              </p>
+              <button onClick={() => handleEdit(t.id)}>Edit</button>
             </li>
           ))}
         </ul>

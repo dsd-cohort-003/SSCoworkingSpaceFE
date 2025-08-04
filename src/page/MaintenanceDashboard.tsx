@@ -96,6 +96,22 @@ export default function MaintenanceDashboard() {
                   </p>
                 </>
               )}
+              <p style={{ margin: '4px 0' }}>
+                <strong>Category:</strong> {ticket.category}
+              </p>
+              <p style={{ margin: '4px 0' }}>
+                <strong>Description:</strong> {ticket.description || 'N/A'}
+              </p>
+              {ticket.image && (
+                <img
+                  src={ticket.image}
+                  alt="Ticket"
+                  style={{ maxWidth: '100%', borderRadius: 8, marginTop: 8 }}
+                />
+              )}
+              <p style={{ margin: '4px 0' }}>
+                <strong>Assignees:</strong> {ticket.assignees || 'None'}
+              </p>
               <div style={{ marginTop: 12 }}>
                 <button
                   onClick={() => handleEdit(ticket.id)}
