@@ -33,12 +33,15 @@ export const LABELS = {
       AVAILABLE_RESOURCES: 'Available Resources',
       BOOKING_SUMMARY: 'Booking Summary',
       BOOKING_CONFIRMATION: 'Booking Confirmation',
+      BOOKING_THANKS: 'Thank you for your reservation!',
     },
     DESCRIPTIONS: {
       SELECT_DATES: 'Select your preferred dates and workspace type',
       ADD_RESOURCES:
         'Add equipment and services to enhance your workspace experience',
       REVIEW_BOOKING: 'Review your booking details before confirming',
+      THANKS_MESSAGE:
+        "We will review your application and reply soon if it's approved.",
     },
     LABELS: {
       FROM_DATE: 'From',

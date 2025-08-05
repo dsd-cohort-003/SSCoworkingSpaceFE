@@ -11,6 +11,7 @@ import MainLayout from './layout/MainLayout.tsx';
 import BillingPage from './page/BillingPage.tsx';
 import PaymentConfirmation from './page/PaymentConfirmation.tsx';
 import { AuthProvider } from './contexts/AuthContext';
+import Thanks from './routes/booking/Thanks.tsx';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path="desks" element={<ChooseDesk />} />
             <Route path="resources" element={<ChooseResources />} />
             <Route path="confirmation" element={<BookingConfirmation />} />
+            <Route path="thanks" element={<Thanks />} />
           </Route>
           <Route path="maintenance" element={<Maintenance />} />
           <Route path="resources" element={<Resources />} />
