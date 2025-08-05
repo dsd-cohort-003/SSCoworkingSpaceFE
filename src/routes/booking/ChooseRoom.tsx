@@ -1,14 +1,14 @@
 import LocationCard from '@/components/booking/LocationCard';
-import { useLocationData } from '@/hooks/useLocationData';
+import { useLocationQuery } from '@/hooks/useLocationQuery';
 import { useBookingFlow } from '@/hooks/useBookingFlow';
 import { LABELS } from '../../labels';
 
 export default function ChooseRoom() {
-  const { locations } = useLocationData();
+  const { locations, isLoading, isError } = useLocationQuery();
   // const { locations, isError, isLoading } = useLocationQuery();
   const { goToDeskSelection } = useBookingFlow();
 
-  const handleReserve = (locationId: string) => {
+  const handleReserve = (locationId: number) => {
     const location = locations.find((loc) => loc.id === locationId);
     if (location) {
       goToDeskSelection(location.name);
@@ -141,15 +141,21 @@ export default function ChooseRoom() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            {locations.map((location, index) => (
-              <div
-                key={location.id}
-                className="animate-fade-in-up"
-                style={{ animationDelay: `${index * 200}ms` }}
-              >
-                <LocationCard location={location} onReserve={handleReserve} />
-              </div>
-            ))}
+            {isLoading ? (
+              <div>loading offices...</div>
+            ) : isError ? (
+              <div>Issue loading offices, please try again later.</div>
+            ) : (
+              locations.map((location, index) => (
+                <div
+                  key={location.id}
+                  className="animate-fade-in-up"
+                  style={{ animationDelay: `${index * 200}ms` }}
+                >
+                  <LocationCard location={location} onReserve={handleReserve} />
+                </div>
+              ))
+            )}
           </div>
 
           <div className="mt-20 text-center">

@@ -1,16 +1,9 @@
 import { LABELS } from '../../labels';
-
-interface LocationData {
-  id: string;
-  name: string;
-  size: string;
-  rate: string;
-  available: string | null;
-}
+import type { LocationData } from '@/hooks/useLocationQuery';
 
 interface LocationCardProps {
   location: LocationData;
-  onReserve: (locationId: string) => void;
+  onReserve: (locationId: number) => void;
   className?: string;
 }
 
@@ -19,12 +12,13 @@ export default function LocationCard({
   onReserve,
   className = '',
 }: LocationCardProps) {
+  // const { id, name, description, size, streetAddress, city, state, zipcode, price? } = location;
   const locationData =
-    location.name === 'Dallas'
+    location.city === 'Dallas'
       ? LABELS.LOCATIONS.DALLAS
       : LABELS.LOCATIONS.FORT_WORTH;
   const workspaceImage =
-    location.name === 'Dallas'
+    location.city === 'Dallas'
       ? LABELS.IMAGES.MAIN_WORKSPACE
       : LABELS.IMAGES.PRIVATE_OFFICE;
 
