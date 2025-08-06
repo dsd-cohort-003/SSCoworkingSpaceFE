@@ -27,7 +27,7 @@ function App() {
             <Route index element={<Landing />} />
             <Route path="booking" element={<BookingLayout />}>
               <Route path="rooms" element={<ChooseRoom />} />
-              <Route path="desks" element={<ChooseDesk />} />
+              <Route path="office/:officeId/desks" element={<ChooseDesk />} />
               <Route path="resources" element={<ChooseResources />} />
               <Route path="confirmation" element={<BookingConfirmation />} />
               <Route path="thanks" element={<Thanks />} />
