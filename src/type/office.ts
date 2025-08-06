@@ -2,7 +2,7 @@ export interface Office {
   id: number;
   name: string;
   description: string;
-  size: string;
+  size: number;
   state: string;
   city: string;
   streetAddress: string;
