@@ -1,5 +1,6 @@
 import { LABELS } from '../../labels';
 import type { LocationData } from '@/hooks/useLocationQuery';
+import { useNavigate } from 'react-router-dom';
 
 interface LocationCardProps {
   location: LocationData;
@@ -9,19 +10,30 @@ interface LocationCardProps {
 
 export default function LocationCard({
   location,
-  onReserve,
   className = '',
 }: LocationCardProps) {
-  // const { id, name, description, size, streetAddress, city, state, zipcode, price? } = location;
+  const {
+    id,
+    name,
+    // description,
+    size,
+    streetAddress,
+    city,
+    state,
+    zipCode,
+    // price,
+  } = location;
+  const navigate = useNavigate();
   const locationData =
-    location.city === 'Dallas'
-      ? LABELS.LOCATIONS.DALLAS
-      : LABELS.LOCATIONS.FORT_WORTH;
+    city === 'Dallas' ? LABELS.LOCATIONS.DALLAS : LABELS.LOCATIONS.FORT_WORTH;
   const workspaceImage =
-    location.city === 'Dallas'
+    city === 'Dallas'
       ? LABELS.IMAGES.MAIN_WORKSPACE
       : LABELS.IMAGES.PRIVATE_OFFICE;
 
+  const handleReserve = (id: number) => {
+    navigate(`/booking/office/${id}/desks`);
+  };
   return (
     <div
       className={`bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 group ${className}`}
@@ -62,7 +74,7 @@ export default function LocationCard({
         <div className="titleOverlay absolute bottom-0 left-0 right-0 p-6">
           <div className="text-white">
             <h3 className="text-3xl font-light mb-2 tracking-wide">
-              {location.name} {LABELS.LOCATIONS.WORKSPACE_SUFFIX}
+              {name} {LABELS.LOCATIONS.WORKSPACE_SUFFIX}
             </h3>
             <p className="text-white/90 text-lg font-light">
               {workspaceImage.DESCRIPTION}
@@ -101,16 +113,14 @@ export default function LocationCard({
             </div>
           </div>
           <p className="text-gray-600 text-lg leading-relaxed">
-            {locationData.ADDRESS}
+            {`${streetAddress}, ${city}, ${state} ${zipCode}`}
           </p>
           <div className="w-12 h-0.5 bg-gray-900 mt-4 opacity-20"></div>
         </div>
 
         <div className="grid grid-cols-3 gap-6 mb-8">
           <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-light text-gray-900 mb-1">
-              {locationData.SIZE.split(' ')[0]}
-            </div>
+            <div className="text-2xl font-light text-gray-900 mb-1">{size}</div>
             <div className="text-sm text-gray-500 uppercase tracking-wide">
               {locationData.SIZE.split(' ').slice(1).join(' ')}
             </div>
@@ -182,7 +192,7 @@ export default function LocationCard({
         </div>
 
         <button
-          onClick={() => onReserve(location.id)}
+          onClick={() => handleReserve(id)}
           className="w-full bg-gray-900 text-white py-4 rounded-xl hover:bg-gray-800 transition-all duration-300 font-medium hover:shadow-xl transform hover:scale-[1.02] group relative overflow-hidden"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
