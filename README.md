@@ -1,14 +1,6 @@
-<<<<<<< HEAD
-
-# React + TypeScript + Vite
-
-=======
-
 # SSCoworkingSpaceFE
 
 Frontend repository for coworking Space Project for DSD Group
-
-> > > > > > > bf790158d26ed0969793df227a05c6115cd8c0bd
 
 ## Setup
 
@@ -25,12 +17,6 @@ node -v
 ```bash
 npm install
 ```
-
-<<<<<<< HEAD
-
-# SSCoworkingSpaceFE
-
-# Frontend repository for coworking Space Project for DSD Group
 
 ### 2. Start development server
 
@@ -59,5 +45,3 @@ which should run on `http://localhost:4173/`.
 Include Type of change, Short Description, and Jira Ticket number in the title. In the description include a summary of the change, testing evidence
 
 EG: Feature: Add retrieve office endpoint SCRUM-34
-
-> > > > > > > bf790158d26ed0969793df227a05c6115cd8c0bd

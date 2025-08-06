@@ -11,7 +11,7 @@ import {
   confirmPayment,
   fetchUnpaidBillingByUser,
   processPayment,
-} from '@/api/service';
+} from '@/api/billingService';
 import type { Billing } from '@/type/billing';
 import { useNavigate } from 'react-router-dom';
 
