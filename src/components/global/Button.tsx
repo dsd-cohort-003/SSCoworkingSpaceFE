@@ -10,11 +10,11 @@ const colorMap = {
   secondary:
     'bg-[#E4EDEC80] text-gray-900 border border-gray-400 hover:bg-[#E4EDEC] hover:scale-105',
 };
-function Button({ text, onClick, color }: ButtonProps) {
+function Button({ text, color, ...rest }: ButtonProps) {
   return (
     <button
       className={`${colorMap[color]} w-full max-w-[250px] px-4 py-2 rounded-lg focus:outline-none focus:ring transition-all font-medium`}
-      onClick={onClick}
+      {...rest}
     >
       {text}
     </button>
