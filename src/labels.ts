@@ -47,6 +47,30 @@ export const LABELS = {
       TITLE: 'Private Offices',
       DESCRIPTION: 'Executive workspace solutions',
     },
+    REGULAR_DESK: {
+      SRC: '/images/standardDesk.webp',
+      ALT: 'A desk',
+      TITLE: 'Main Workspace',
+      DESCRIPTION: 'Open collaborative environment',
+    },
+    PREMIUM_DESK: {
+      SRC: '/images/premDesk.webp',
+      ALT: 'A premium desk',
+      TITLE: 'Meeting Rooms',
+      DESCRIPTION: 'Professional collaboration spaces',
+    },
+    LARGE_DESK: {
+      SRC: '/images/largeDesk.webp',
+      ALT: 'Large desk with multiple chairs',
+      TITLE: 'Private Offices',
+      DESCRIPTION: 'Executive workspace solutions',
+    },
+    STANDING_DESK: {
+      SRC: '/images/standingDesk.webp',
+      ALT: 'A standing desk',
+      TITLE: 'Private Offices',
+      DESCRIPTION: 'Executive workspace solutions',
+    },
   },
 
   BADGES: {
@@ -192,6 +216,7 @@ export const LABELS = {
       TO_DATE_LABEL: 'To Date',
       BOOKING_SUMMARY_TITLE: 'Booking Summary',
       CONFIRM_BUTTON: 'Confirm Request',
+      CTA: 'Reserve',
       CALENDAR: {
         MONTH_YEAR: 'October 2022',
         DAYS: {

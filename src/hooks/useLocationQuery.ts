@@ -1,27 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
+import type { RawLocationData, LocationData } from '@/type/office';
 
-export interface LocationData {
-  id: number;
-  name: string;
-  description: string;
-  price?: number;
-  size: number;
-  state: string;
-  city: string;
-  streetAddress: string;
-  zipCode: string;
-}
-interface RawLocationData {
-  id: number;
-  name: string;
-  description: string;
-  price?: number;
-  size: string;
-  state: string;
-  city: string;
-  street_address: string;
-  zipcode: string;
-}
 const fetchLocations = async (): Promise<LocationData[]> => {
   const response = await fetch('http://localhost:8080/offices');
   if (!response.ok) throw new Error('Network response was not ok');
@@ -30,6 +9,7 @@ const fetchLocations = async (): Promise<LocationData[]> => {
     id: office.id,
     name: office.name,
     description: office.description,
+    price: office.price,
     size: Number(office.size),
     state: office.state,
     city: office.city,

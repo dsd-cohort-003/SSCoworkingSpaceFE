@@ -6,7 +6,9 @@ import Card from '@/components/ui/card';
 import { useBookingState } from '@/hooks/useBookingState';
 import { useBookingFlow } from '@/hooks/useBookingFlow';
 import { LABELS } from '@/constants/labels';
-
+import useOfficesDesks from '@/hooks/useOfficesDesks';
+import { useParams } from 'react-router';
+import DeskCard from '@/components/booking/DeskCard';
 function ChooseDesk() {
   const navigate = useNavigate();
   const { getCurrentLocationState } = useBookingFlow();
@@ -45,6 +47,9 @@ function ChooseDesk() {
     1,
   ).getDay();
 
+  const officeId = Number(useParams().officeId);
+  const { desks, isLoading, isError } = useOfficesDesks(officeId);
+  console.log(desks);
   return (
     <div className="min-h-screen bg-white">
       <HeroSection
@@ -178,7 +183,6 @@ function ChooseDesk() {
                 </div>
               </Card>
             </div>
-
             <div className="lg:col-span-1">
               <div className="sticky top-8">
                 <BookingSummary
@@ -190,7 +194,17 @@ function ChooseDesk() {
                 />
               </div>
             </div>
+            <div className="lg:col-span-4"></div>
           </div>
+          {isValidBooking &&
+            desks.map((desk) => (
+              <DeskCard
+                key={desk.id}
+                officeDesk={desk}
+                isLoading={isLoading}
+                isError={isError}
+              />
+            ))}
         </div>
       </section>
     </div>
