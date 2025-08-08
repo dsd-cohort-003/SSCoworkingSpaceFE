@@ -49,7 +49,8 @@ function ChooseDesk() {
 
   const officeId = Number(useParams().officeId);
   const { desks, isLoading, isError } = useOfficesDesks(officeId);
-  console.log(desks);
+  // const [totalPrice, setTotalPrice] = useState(0);
+
   return (
     <div className="min-h-screen bg-white">
       <HeroSection
@@ -196,7 +197,7 @@ function ChooseDesk() {
             </div>
             <div className="lg:col-span-4"></div>
           </div>
-          {isValidBooking &&
+          {!isValidBooking &&
             desks.map((desk) => (
               <DeskCard
                 key={desk.id}

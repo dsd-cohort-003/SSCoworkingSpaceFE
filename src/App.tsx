@@ -15,39 +15,45 @@ import MaintenanceDashboard from './page/MaintenanceDashboard.tsx';
 import MaintenanceEdit from './page/MaintenanceEdit.tsx';
 import Thanks from './routes/booking/Thanks.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
+import { store } from './store/store.ts';
+import { Provider } from 'react-redux';
 function App() {
   const queryClient = new QueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Routes>
-          <Route element={<MainLayout />}>
-            <Route index element={<Landing />} />
-            <Route path="booking" element={<BookingLayout />}>
-              <Route path="rooms" element={<ChooseRoom />} />
-              <Route path="office/:officeId/desks" element={<ChooseDesk />} />
-              <Route path="resources" element={<ChooseResources />} />
-              <Route path="confirmation" element={<BookingConfirmation />} />
-              <Route path="thanks" element={<Thanks />} />
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <Routes>
+            <Route element={<MainLayout />}>
+              <Route index element={<Landing />} />
+              <Route path="booking" element={<BookingLayout />}>
+                <Route path="rooms" element={<ChooseRoom />} />
+                <Route path="office/:officeId/desks" element={<ChooseDesk />} />
+                <Route path="resources" element={<ChooseResources />} />
+                <Route path="confirmation" element={<BookingConfirmation />} />
+                <Route path="thanks" element={<Thanks />} />
+              </Route>
+              <Route path="maintenance" element={<MaintenanceTicketing />} />
+              <Route
+                path="/maintenance/edit/:id"
+                element={<MaintenanceEdit />}
+              />
+              <Route
+                path="/maintenance/dashboard"
+                element={<MaintenanceDashboard />}
+              />
+              <Route path="resources" element={<Resources />} />
+              <Route path="billing" element={<BillingPage />} />
+              <Route
+                path="payment-confirmation"
+                element={<PaymentConfirmation />}
+              />
             </Route>
-            <Route path="maintenance" element={<MaintenanceTicketing />} />
-            <Route path="/maintenance/edit/:id" element={<MaintenanceEdit />} />
-            <Route
-              path="/maintenance/dashboard"
-              element={<MaintenanceDashboard />}
-            />
-            <Route path="resources" element={<Resources />} />
-            <Route path="billing" element={<BillingPage />} />
-            <Route
-              path="payment-confirmation"
-              element={<PaymentConfirmation />}
-            />
-          </Route>
-        </Routes>
-      </AuthProvider>
-    </QueryClientProvider>
+          </Routes>
+        </AuthProvider>
+      </QueryClientProvider>
+    </Provider>
   );
 }
 

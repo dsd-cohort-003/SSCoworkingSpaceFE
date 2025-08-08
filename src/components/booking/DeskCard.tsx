@@ -3,6 +3,9 @@ import type { OfficeDesk } from '../../type/officeDesk';
 import BodyText from '../Text/BodyText';
 import { LABELS } from '../../labels';
 import Button from '../global/Button';
+import { useDispatch, useSelector } from 'react-redux';
+import { setTotal } from '@/store/slices/officeSlice';
+import type { RootState } from '@/store/store';
 interface DeskCardProps {
   key: number;
   officeDesk: OfficeDesk;
@@ -22,6 +25,12 @@ function DeskCard({
     basePrice,
     office: { name },
   } = officeDesk;
+
+  const dispatch = useDispatch();
+  const total = useSelector(
+    (state: RootState) => state.officeReservation.resInfo.total,
+  );
+
   const { SRC: src, ALT: alt } =
     description === 'Regular Desk'
       ? LABELS.IMAGES.REGULAR_DESK
@@ -32,7 +41,10 @@ function DeskCard({
           : description === 'Standing Desk'
             ? LABELS.IMAGES.STANDING_DESK
             : { SRC: '', ALT: '' };
-  // const description = officeDesk.description;
+  const onReserve = () => {
+    dispatch(setTotal());
+    console.log(total);
+  };
   return (
     <div
       className={`h-full bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 group ${className} sm:h-[200px]`}
@@ -58,7 +70,7 @@ function DeskCard({
               <Button
                 text={LABELS.BOOKING.CHOOSE_DESK.CTA}
                 color="indigo"
-                onClick={() => console.log('clicked')}
+                onClick={() => onReserve()}
               />
             </div>
           </div>
