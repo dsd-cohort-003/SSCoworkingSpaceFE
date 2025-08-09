@@ -20,3 +20,15 @@ export interface RawLocationData {
   street_address: string;
   zipcode: string;
 }
+interface ReservationInfo {
+  total: number | 0;
+  officeTotal: number | 0;
+  desksTotal: number | 0;
+  startDate: Date | null;
+  endDate: Date | null;
+  resDesks: LocationData | [];
+  resOffice: LocationData | null;
+}
+export interface officeReservationState {
+  resInfo: ReservationInfo;
+}

@@ -3,9 +3,10 @@ import type { OfficeDesk } from '../../type/officeDesk';
 import BodyText from '../Text/BodyText';
 import { LABELS } from '../../labels';
 import Button from '../global/Button';
-import { useDispatch, useSelector } from 'react-redux';
-import { setTotal } from '@/store/slices/officeSlice';
-import type { RootState } from '@/store/store';
+import { useDispatch } from 'react-redux';
+// import { useSelector } from 'react-redux';
+import { setDeskTotal } from '@/store/slices/officeSlice';
+// import type { RootState } from '@/store/store';
 interface DeskCardProps {
   key: number;
   officeDesk: OfficeDesk;
@@ -27,9 +28,9 @@ function DeskCard({
   } = officeDesk;
 
   const dispatch = useDispatch();
-  const total = useSelector(
-    (state: RootState) => state.officeReservation.resInfo.total,
-  );
+  // const { total, officeTotal, desksTotal } = useSelector(
+  //   (state: RootState) => state.officeReservation.resInfo,
+  // );
 
   const { SRC: src, ALT: alt } =
     description === 'Regular Desk'
@@ -41,10 +42,11 @@ function DeskCard({
           : description === 'Standing Desk'
             ? LABELS.IMAGES.STANDING_DESK
             : { SRC: '', ALT: '' };
-  const onReserve = () => {
-    dispatch(setTotal());
-    console.log(total);
+
+  const onReserve = (basePrice: number) => {
+    dispatch(setDeskTotal(basePrice));
   };
+
   return (
     <div
       className={`h-full bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 group ${className} sm:h-[200px]`}
@@ -70,7 +72,7 @@ function DeskCard({
               <Button
                 text={LABELS.BOOKING.CHOOSE_DESK.CTA}
                 color="indigo"
-                onClick={() => onReserve()}
+                onClick={() => onReserve(basePrice)}
               />
             </div>
           </div>

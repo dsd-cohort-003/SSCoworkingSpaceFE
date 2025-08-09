@@ -9,7 +9,18 @@ import { LABELS } from '@/constants/labels';
 import useOfficesDesks from '@/hooks/useOfficesDesks';
 import { useParams } from 'react-router';
 import DeskCard from '@/components/booking/DeskCard';
+import { useDispatch } from 'react-redux';
+import { setOffice } from '@/store/slices/officeSlice';
+import { useLocationQuery } from '@/hooks/useLocationQuery';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/store/store';
+
 function ChooseDesk() {
+  const { locations } = useLocationQuery();
+  const officeId = Number(useParams().officeId);
+  const { desks, isLoading, isError } = useOfficesDesks(officeId);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { getCurrentLocationState } = useBookingFlow();
   const {
@@ -23,8 +34,10 @@ function ChooseDesk() {
   } = useBookingState();
 
   const locationState = getCurrentLocationState();
+  const storedOffice = useSelector(
+    (state: RootState) => state.officeReservation.resInfo.resOffice,
+  );
   const officeName = locationState?.location || 'Office';
-
   const handleConfirmRequest = () => {
     if (isValidBooking) {
       navigate('/booking/resources', {
@@ -47,9 +60,14 @@ function ChooseDesk() {
     1,
   ).getDay();
 
-  const officeId = Number(useParams().officeId);
-  const { desks, isLoading, isError } = useOfficesDesks(officeId);
-  // const [totalPrice, setTotalPrice] = useState(0);
+  useEffect(() => {
+    if (locations.length > 0) {
+      const fetchedOffice = locations.find((loc) => loc.id === officeId);
+      if (fetchedOffice?.id !== storedOffice?.id) {
+        dispatch(setOffice(fetchedOffice || null));
+      }
+    }
+  }, [locations, officeId, storedOffice?.id, dispatch]);
 
   return (
     <div className="min-h-screen bg-white">

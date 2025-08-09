@@ -1,7 +1,8 @@
 import { LABELS } from '../../labels';
-import type { LocationData } from '@/hooks/useLocationQuery';
+import type { LocationData } from '../../type/office';
 import { useNavigate } from 'react-router-dom';
-
+import { useDispatch } from 'react-redux';
+import { setOffice } from '@/store/slices/officeSlice';
 interface LocationCardProps {
   location: LocationData;
   onReserve: (locationId: number) => void;
@@ -23,6 +24,8 @@ export default function LocationCard({
     zipCode,
     // price,
   } = location;
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const locationData =
     city === 'Dallas' ? LABELS.LOCATIONS.DALLAS : LABELS.LOCATIONS.FORT_WORTH;
@@ -30,8 +33,8 @@ export default function LocationCard({
     city === 'Dallas'
       ? LABELS.IMAGES.MAIN_WORKSPACE
       : LABELS.IMAGES.PRIVATE_OFFICE;
-
   const handleReserve = (id: number) => {
+    dispatch(setOffice(location));
     navigate(`/booking/office/${id}/desks`);
   };
   return (

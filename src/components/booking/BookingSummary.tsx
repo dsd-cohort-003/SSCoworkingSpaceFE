@@ -1,4 +1,6 @@
 import { LABELS } from '../../labels';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/store/store';
 
 interface BookingSummaryProps {
   location: string;
@@ -26,7 +28,9 @@ export default function BookingSummary({
   };
 
   const duration = getDurationInDays();
-
+  const officePrice = useSelector(
+    (state: RootState) => state.officeReservation.resInfo.resOffice?.price || 0,
+  );
   return (
     <div
       className={`bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 ${className}`}
@@ -90,7 +94,7 @@ export default function BookingSummary({
                 Total Investment
               </span>
               <p className="text-2xl font-light text-gray-900 mt-1">
-                ${duration > 0 ? (duration * 25).toFixed(2) : '0.00'}
+                {officePrice ? (officePrice * duration).toFixed(2) : '0.00'}
               </p>
             </div>
             <div className="text-right">
