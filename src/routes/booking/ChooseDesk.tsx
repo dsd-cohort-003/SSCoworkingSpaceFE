@@ -191,8 +191,9 @@ function ChooseDesk() {
                       const isSelected = selectedDate === dateString;
                       const isToDate = toDate === dateString;
                       const isFromDate = fromDate === dateString;
-                      const isBetween =
-                        fromDate < dateString && toDate > dateString;
+                      const isBetween = fromDate
+                        ? fromDate < dateString && toDate > dateString
+                        : false;
 
                       const isToday =
                         dateString ===
