@@ -29,10 +29,25 @@ const officeReservationSlice = createSlice({
 
       console.log(state.resInfo.desksTotal);
     },
+    setOfficeTotal(state, action) {
+      state.resInfo.officeTotal = (
+        (state.resInfo.officeTotal / 31) *
+        action.payload.duration
+      ).toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      });
+    },
     setStartDate() {},
     setEndDate() {},
   },
 });
-export const { setTotal, setDeskTotal, setStartDate, setEndDate, setOffice } =
-  officeReservationSlice.actions;
+export const {
+  setTotal,
+  setDeskTotal,
+  setOfficeTotal,
+  setStartDate,
+  setEndDate,
+  setOffice,
+} = officeReservationSlice.actions;
 export default officeReservationSlice.reducer;

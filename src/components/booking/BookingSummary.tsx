@@ -94,7 +94,12 @@ export default function BookingSummary({
                 Total Investment
               </span>
               <p className="text-2xl font-light text-gray-900 mt-1">
-                {officePrice ? (officePrice * duration).toFixed(2) : '0.00'}
+                {officePrice
+                  ? ((officePrice / 31) * duration).toLocaleString('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                    })
+                  : '$0.00'}
               </p>
             </div>
             <div className="text-right">
