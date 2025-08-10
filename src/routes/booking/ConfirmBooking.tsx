@@ -4,16 +4,30 @@ import Card from '@/components/ui/card';
 import PriceBreakdown from '@/components/ui/PriceBreakdown';
 import { useLocation } from 'react-router';
 import { useMutation } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
+import { useState, useEffect } from 'react';
 
 export default function ConfirmBooking() {
   const location = useLocation();
+  const [username, setUsername] = useState('');
   const { goToConfirmation, goToHomepage } = useBookingFlow();
+
   const bookingData = (location.state as BookingData) || {
     location: 'Office',
     fromDate: '',
     toDate: '',
     resources: [],
   };
+
+  useEffect(() => {
+    const getSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      const session = data.session;
+      setUsername(session?.user.user_metadata.full_name);
+    };
+
+    getSession();
+  }, []);
 
   const officeName = bookingData.location;
   const fromDate = bookingData.fromDate;
@@ -24,10 +38,10 @@ export default function ConfirmBooking() {
 
   const bookingDetails = {
     ...bookingData,
-    confirmationNumber: `SS${Math.random()
+    /* confirmationNumber: `SS${Math.random()
       .toString(36)
       .substr(2, 9)
-      .toUpperCase()}`,
+      .toUpperCase()}`, */
   };
 
   const getDurationInDays = () => {
@@ -124,15 +138,6 @@ export default function ConfirmBooking() {
       });
     },
   });
-
-  /* const newReservation = {
-    username: "carol",
-    totalPrice: totalCost,
-    deskId: 4,
-    startDate: fromDate,
-    endDate: toDate,
-    resourceIds: resources?.map(resource => resource.id)
-  } */
 
   return (
     <div>
@@ -287,7 +292,7 @@ export default function ConfirmBooking() {
               <button
                 onClick={() =>
                   mutation.mutate({
-                    username: 'carol',
+                    username,
                     totalPrice: totalCost,
                     deskId: 4,
                     startDate: fromDate,

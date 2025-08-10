@@ -11,29 +11,36 @@ import MainLayout from './layout/MainLayout.tsx';
 import BillingPage from './page/BillingPage.tsx';
 import PaymentConfirmation from './page/PaymentConfirmation.tsx';
 import { AuthProvider } from './contexts/AuthContext';
+import ConfirmBooking from './routes/booking/ConfirmBooking.tsx';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        <Route element={<MainLayout />}>
-          <Route index element={<Landing />} />
-          <Route path="booking" element={<BookingLayout />}>
-            <Route path="rooms" element={<ChooseRoom />} />
-            <Route path="desks" element={<ChooseDesk />} />
-            <Route path="resources" element={<ChooseResources />} />
-            <Route path="confirmation" element={<BookingConfirmation />} />
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Routes>
+          <Route element={<MainLayout />}>
+            <Route index element={<Landing />} />
+            <Route path="booking" element={<BookingLayout />}>
+              <Route path="rooms" element={<ChooseRoom />} />
+              <Route path="desks" element={<ChooseDesk />} />
+              <Route path="resources" element={<ChooseResources />} />
+              <Route path="confirmation" element={<BookingConfirmation />} />
+              <Route path="confirm-reservation" element={<ConfirmBooking />} />
+            </Route>
+            <Route path="maintenance" element={<Maintenance />} />
+            <Route path="resources" element={<Resources />} />
+            <Route path="billing" element={<BillingPage />} />
+            <Route
+              path="payment-confirmation"
+              element={<PaymentConfirmation />}
+            />
           </Route>
-          <Route path="maintenance" element={<Maintenance />} />
-          <Route path="resources" element={<Resources />} />
-          <Route path="billing" element={<BillingPage />} />
-          <Route
-            path="payment-confirmation"
-            element={<PaymentConfirmation />}
-          />
-        </Route>
-      </Routes>
-    </AuthProvider>
+        </Routes>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 

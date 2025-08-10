@@ -14,7 +14,8 @@ export default function BookingConfirmation() {
 
   const bookingDetails = {
     ...bookingData,
-    confirmationNumber: `SS${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+    //confirmationNumber: `SS${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+    confirmationNumber: location.state.confirmationNumber,
   };
 
   const getDurationInDays = () => {

@@ -116,7 +116,8 @@ const mockResources: Resource[] = [
 ];
 
 export default function ChooseResources() {
-  const { goToConfirmation } = useBookingFlow();
+  const { goToConfirmReservation } = useBookingFlow();
+  //const { goToConfirmation } = useBookingFlow();
   const location = useLocation();
   const bookingData = (location.state as {
     location: string;
@@ -195,13 +196,22 @@ export default function ChooseResources() {
   };
 
   const handleConfirmRequest = () => {
-    goToConfirmation({
+    goToConfirmReservation({
       location: officeName,
       fromDate,
       toDate,
       resources: cart,
     });
   };
+
+  /* const handleConfirmRequest = () => {
+    goToConfirmation({
+      location: officeName,
+      fromDate,
+      toDate,
+      resources: cart,
+    });
+  }; */
 
   const getCategoryIcon = (category: string) => {
     switch (category) {

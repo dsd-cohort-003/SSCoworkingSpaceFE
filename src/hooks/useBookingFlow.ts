@@ -15,6 +15,15 @@ export interface BookingData {
   resources?: CartItem[];
 }
 
+export interface BookingDetails {
+  location: string;
+  fromDate: string;
+  toDate: string;
+  resources?: CartItem[];
+  confirmationNumber: string;
+  reservationStatus: string;
+}
+
 export interface LocationState {
   location: string;
 }
@@ -37,9 +46,15 @@ export const useBookingFlow = () => {
     });
   };
 
-  const goToConfirmation = (bookingData: BookingData) => {
-    navigate('/booking/confirmation', {
+  const goToConfirmReservation = (bookingData: BookingData) => {
+    navigate('/booking/confirm-reservation', {
       state: bookingData,
+    });
+  };
+
+  const goToConfirmation = (bookingDetails: BookingDetails) => {
+    navigate('/booking/confirmation', {
+      state: bookingDetails,
     });
   };
 
@@ -55,6 +70,7 @@ export const useBookingFlow = () => {
     getCurrentLocationState,
     goToRoomSelection,
     goToDeskSelection,
+    goToConfirmReservation,
     goToConfirmation,
     goToHomepage,
     goBack,
