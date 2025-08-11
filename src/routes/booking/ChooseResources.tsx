@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useBookingFlow } from '@/hooks/useBookingFlow';
 import HeroSection from '@/components/ui/HeroSection';
@@ -10,116 +10,10 @@ import type { Reservation, ReservationDTO } from '@/type/reservation';
 import type { DeskReservationDTO } from '@/type/deskReservation';
 import { createBilling } from '@/services/billingService';
 import { useAuth } from '@/contexts/AuthContext';
-
-interface Resource {
-  id: string;
-  name: string;
-  category: 'television' | 'projector' | 'monitor';
-  price: number;
-  description: string;
-  image: string;
-  available: boolean;
-  specifications: string[];
-}
-
-interface CartItem extends Resource {
-  quantity: number;
-}
+import type { CartItem, Resource } from '@/type/resource';
+import { fetchAllResources } from '@/services/resourceService';
 
 type SortOption = 'price-asc' | 'price-desc' | 'name';
-
-const mockResources: Resource[] = [
-  {
-    id: 'tv-1',
-    name: '65" 4K Smart TV',
-    category: 'television',
-    price: 45,
-    description: 'Premium 4K Smart TV with wireless casting capabilities',
-    image: '/images/tv-placeholder.jpg',
-    available: true,
-    specifications: [
-      '4K Ultra HD',
-      'Smart TV Features',
-      'Wireless Casting',
-      'HDMI Ports',
-    ],
-  },
-  {
-    id: 'tv-2',
-    name: '55" Conference Display',
-    category: 'television',
-    price: 35,
-    description: 'Professional conference room display with touch capabilities',
-    image: '/images/tv-placeholder.jpg',
-    available: true,
-    specifications: [
-      'Full HD',
-      'Touch Screen',
-      'Conference Features',
-      'Multiple Inputs',
-    ],
-  },
-  {
-    id: 'proj-1',
-    name: '4K Laser Projector',
-    category: 'projector',
-    price: 75,
-    description: 'High-end laser projector for presentations and media',
-    image: '/images/projector-placeholder.jpg',
-    available: true,
-    specifications: [
-      '4K Resolution',
-      'Laser Technology',
-      '3000 Lumens',
-      'Wireless Connection',
-    ],
-  },
-  {
-    id: 'proj-2',
-    name: 'Portable Projector',
-    category: 'projector',
-    price: 25,
-    description: 'Compact portable projector for small meetings',
-    image: '/images/projector-placeholder.jpg',
-    available: false,
-    specifications: [
-      '1080p HD',
-      'Portable Design',
-      '1500 Lumens',
-      'USB-C Connection',
-    ],
-  },
-  {
-    id: 'mon-1',
-    name: '32" 4K Monitor',
-    category: 'monitor',
-    price: 30,
-    description: 'Professional 4K monitor with color accuracy',
-    image: '/images/monitor-placeholder.jpg',
-    available: true,
-    specifications: [
-      '4K UHD',
-      'Color Accurate',
-      'USB-C Hub',
-      'Adjustable Stand',
-    ],
-  },
-  {
-    id: 'mon-2',
-    name: '27" Ultrawide Monitor',
-    category: 'monitor',
-    price: 40,
-    description: 'Ultrawide monitor perfect for productivity',
-    image: '/images/monitor-placeholder.jpg',
-    available: true,
-    specifications: [
-      'Ultrawide 21:9',
-      'QHD Resolution',
-      'Curved Display',
-      'Multiple Ports',
-    ],
-  },
-];
 
 export default function ChooseResources() {
   const { goToBilling } = useBookingFlow();
@@ -142,31 +36,35 @@ export default function ChooseResources() {
   const [showAvailableOnly, setShowAvailableOnly] = useState(true);
   const [sortBy, setSortBy] = useState<SortOption>('name');
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [filteredResources, setFilteredResources] = useState<Resource[]>([]);
 
   const { user } = useAuth();
 
-  const filteredResources = mockResources
-    .filter((resource) => {
-      const matchesSearch =
-        resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        resource.description.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory =
-        selectedCategory === 'all' || resource.category === selectedCategory;
-      const matchesAvailability = !showAvailableOnly || resource.available;
-
-      return matchesSearch && matchesCategory && matchesAvailability;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case 'price-asc':
-          return a.price - b.price;
-        case 'price-desc':
-          return b.price - a.price;
-        case 'name':
-        default:
-          return a.name.localeCompare(b.name);
-      }
+  useEffect(() => {
+    fetchAllResources().then((resources) => {
+      // resources
+      //   .filter((resource) => {
+      //     const matchesSearch =
+      //       resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      //       resource.description.toLowerCase().includes(searchTerm.toLowerCase());
+      //     const matchesCategory =
+      //       selectedCategory === 'all' || resource.category === selectedCategory;
+      //     return matchesSearch && matchesCategory;
+      //   })
+      //   .sort((a, b) => {
+      //     switch (sortBy) {
+      //       case 'price-asc':
+      //         return a.price - b.price;
+      //       case 'price-desc':
+      //         return b.price - a.price;
+      //       case 'name':
+      //       default:
+      //         return a.name.localeCompare(b.name);
+      //     }
+      //   });
+      setFilteredResources(resources);
     });
+  }, []);
 
   const addToCart = (resource: Resource) => {
     setCart((prev) => {
@@ -182,11 +80,11 @@ export default function ChooseResources() {
     });
   };
 
-  const removeFromCart = (resourceId: string) => {
+  const removeFromCart = (resourceId: number) => {
     setCart((prev) => prev.filter((item) => item.id !== resourceId));
   };
 
-  const updateQuantity = (resourceId: string, quantity: number) => {
+  const updateQuantity = (resourceId: number, quantity: number) => {
     if (quantity === 0) {
       removeFromCart(resourceId);
       return;
@@ -214,7 +112,7 @@ export default function ChooseResources() {
         endDate: new Date(toDate),
       } as DeskReservationDTO,
       resourceReservations: cart.map((item) => ({
-        id: 1, // TODO - implement fetching resource's ID once they are no longer hardcoded
+        id: item.id, // TODO - implement fetching resource's ID once they are no longer hardcoded
         quantity: item.quantity,
         startDate: new Date(fromDate),
         endDate: new Date(toDate),
@@ -242,8 +140,8 @@ export default function ChooseResources() {
     // });
   };
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
+  const getCategoryIcon = (type: string) => {
+    switch (type.toLowerCase()) {
       case 'television':
         return (
           <svg
@@ -292,6 +190,7 @@ export default function ChooseResources() {
             />
           </svg>
         );
+      // TODO add more
       default:
         return null;
     }
@@ -442,17 +341,17 @@ export default function ChooseResources() {
                 {filteredResources.map((resource) => (
                   <Card key={resource.id} hover padding="md">
                     <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mb-6 rounded-lg">
-                      {getCategoryIcon(resource.category)}
-                      {!resource.available && (
-                        <div className="absolute top-4 right-4 bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium">
-                          {LABELS.BOOKING.LABELS.UNAVAILABLE}
-                        </div>
-                      )}
-                      {resource.available && (
-                        <div className="absolute top-4 right-4 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
-                          {LABELS.BOOKING.LABELS.AVAILABLE}
-                        </div>
-                      )}
+                      {getCategoryIcon(resource.type)}
+                      {/* {!resource.available && ( */}
+                      <div className="absolute top-4 right-4 bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium">
+                        {LABELS.BOOKING.LABELS.UNAVAILABLE}
+                      </div>
+                      {/* )} */}
+                      {/* {resource.available && ( */}
+                      <div className="absolute top-4 right-4 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+                        {LABELS.BOOKING.LABELS.AVAILABLE}
+                      </div>
+                      {/* )} */}
                     </div>
 
                     <h3 className="text-xl font-medium text-gray-900 mb-2">
@@ -462,7 +361,7 @@ export default function ChooseResources() {
                       {resource.description}
                     </p>
 
-                    <div className="mb-4">
+                    {/* <div className="mb-4">
                       <h4 className="text-sm font-medium text-gray-700 mb-2">
                         Specifications
                       </h4>
@@ -476,7 +375,7 @@ export default function ChooseResources() {
                           </span>
                         ))}
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="flex items-center justify-between">
                       <div className="text-2xl font-light text-gray-900">
@@ -485,11 +384,11 @@ export default function ChooseResources() {
                       </div>
                       <button
                         onClick={() => addToCart(resource)}
-                        disabled={!resource.available}
+                        // disabled={!resource.available}
                         className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
-                          resource.available
-                            ? 'bg-gray-900 text-white hover:bg-gray-800 hover:shadow-lg'
-                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                          // resource.available ?
+                          'bg-gray-900 text-white hover:bg-gray-800 hover:shadow-lg'
+                          // : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                         }`}
                       >
                         {LABELS.ACTIONS.ADD}
