@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { useSearchParams } from 'react-router';
-import { fetchBillingById } from '@/api/billingService';
+import { fetchBillingById } from '@/services/billingService';
 import type { Billing } from '@/type/billing';
 
 const PaymentConfirmation: React.FC = () => {
@@ -87,7 +87,7 @@ const PaymentConfirmation: React.FC = () => {
             </Typography>
             <Typography>
               <strong>Desk:</strong>{' '}
-              {desk.description ?? desk.name ?? 'Unknown'}
+              {desk.description ?? desk.description ?? 'Unknown'}
             </Typography>
             <Typography>
               <strong>Start Date:</strong> {startDate}
@@ -97,12 +97,12 @@ const PaymentConfirmation: React.FC = () => {
             </Typography>
 
             {/* Optional: List resource reservations if any */}
-            {bill.reservation.resourceReservation.length > 0 && (
+            {bill.reservation.resourceReservations.length > 0 && (
               <>
                 <Typography variant="subtitle1" mt={2} mb={1}>
                   Resource Reservations:
                 </Typography>
-                {bill.reservation.resourceReservation.map((rr) => (
+                {bill.reservation.resourceReservations.map((rr) => (
                   <Box key={rr.id} ml={2} mb={1}>
                     <Typography>
                       <strong>Resource:</strong> {rr.resource.name}

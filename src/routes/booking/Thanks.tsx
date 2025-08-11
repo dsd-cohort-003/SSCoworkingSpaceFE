@@ -1,4 +1,4 @@
-import { LABELS } from '@/constants/labels.ts';
+import { LABELS } from '@/constants/labels';
 
 export default function Thanks() {
   return (

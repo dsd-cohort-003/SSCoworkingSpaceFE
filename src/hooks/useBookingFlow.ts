@@ -37,6 +37,12 @@ export const useBookingFlow = () => {
     });
   };
 
+  const goToBilling = (bookingData: BookingData) => {
+    navigate('/booking/billing', {
+      state: bookingData,
+    });
+  };
+
   const goToConfirmation = (bookingData: BookingData) => {
     navigate('/booking/confirmation', {
       state: bookingData,
@@ -55,6 +61,7 @@ export const useBookingFlow = () => {
     getCurrentLocationState,
     goToRoomSelection,
     goToDeskSelection,
+    goToBilling,
     goToConfirmation,
     goToHomepage,
     goBack,

@@ -1,4 +1,7 @@
-import { fetchTicketById, updateTicketAdmin } from '@/api/maintenanceService';
+import {
+  fetchTicketById,
+  updateTicketAdmin,
+} from '@/services/maintenanceService';
 import type { MaintenanceTicket } from '@/type/maintenanceTicket';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';

@@ -4,6 +4,12 @@ import { useBookingFlow } from '@/hooks/useBookingFlow';
 import HeroSection from '@/components/ui/HeroSection';
 import Card from '@/components/ui/card';
 import { LABELS } from '@/constants/labels';
+import { submitReservation } from '@/services/reservationService';
+import type { ResourceReservationDTO } from '@/type/resourceReservation';
+import type { Reservation, ReservationDTO } from '@/type/reservation';
+import type { DeskReservationDTO } from '@/type/deskReservation';
+import { createBilling } from '@/services/billingService';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Resource {
   id: string;
@@ -116,7 +122,7 @@ const mockResources: Resource[] = [
 ];
 
 export default function ChooseResources() {
-  const { goToConfirmation } = useBookingFlow();
+  const { goToBilling } = useBookingFlow();
   const location = useLocation();
   const bookingData = (location.state as {
     location: string;
@@ -136,6 +142,8 @@ export default function ChooseResources() {
   const [showAvailableOnly, setShowAvailableOnly] = useState(true);
   const [sortBy, setSortBy] = useState<SortOption>('name');
   const [cart, setCart] = useState<CartItem[]>([]);
+
+  const { user } = useAuth();
 
   const filteredResources = mockResources
     .filter((resource) => {
@@ -195,12 +203,43 @@ export default function ChooseResources() {
   };
 
   const handleConfirmRequest = () => {
-    goToConfirmation({
-      location: officeName,
-      fromDate,
-      toDate,
-      resources: cart,
+    console.log(user);
+    // Submit reservation
+    const reservation: ReservationDTO = {
+      authUserId: user?.id || '', // empty if no user
+      totalPrice: 1, // TODO - calculate total price based on cart
+      deskReservation: {
+        id: 1, // TODO - fetch actual desk ID
+        startDate: new Date(fromDate),
+        endDate: new Date(toDate),
+      } as DeskReservationDTO,
+      resourceReservations: cart.map((item) => ({
+        id: 1, // TODO - implement fetching resource's ID once they are no longer hardcoded
+        quantity: item.quantity,
+        startDate: new Date(fromDate),
+        endDate: new Date(toDate),
+      })) as ResourceReservationDTO[],
+      description: '',
+    };
+    // Submit reservation request
+    submitReservation(reservation).then((res: Reservation) => {
+      // Submit/generate bill
+      createBilling(res.id);
+      // Redirect to billing page
+      goToBilling({
+        location: officeName,
+        fromDate,
+        toDate,
+        resources: cart,
+      });
     });
+
+    // goToConfirmation({
+    //   location: officeName,
+    //   fromDate,
+    //   toDate,
+    //   resources: cart,
+    // });
   };
 
   const getCategoryIcon = (category: string) => {

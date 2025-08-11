@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { deleteTicket, fetchAllTickets } from '../api/maintenanceService';
+import { deleteTicket, fetchAllTickets } from '../services/maintenanceService';
 import type { MaintenanceTicket } from '../type/maintenanceTicket';
 import { useNavigate } from 'react-router';
 

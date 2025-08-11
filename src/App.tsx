@@ -6,7 +6,6 @@ import ChooseDesk from './routes/booking/ChooseDesk.tsx';
 import ChooseResources from './routes/booking/ChooseResources.tsx';
 import BookingConfirmation from './routes/booking/BookingConfirmation.tsx';
 import Landing from './routes/Landing.tsx';
-import Resources from './routes/Resources.tsx';
 import MainLayout from './layout/MainLayout.tsx';
 import BillingPage from './page/BillingPage.tsx';
 import PaymentConfirmation from './page/PaymentConfirmation.tsx';
@@ -29,6 +28,7 @@ function App() {
               <Route path="rooms" element={<ChooseRoom />} />
               <Route path="office/:officeId/desks" element={<ChooseDesk />} />
               <Route path="resources" element={<ChooseResources />} />
+              <Route path="billing" element={<BillingPage />} />
               <Route path="confirmation" element={<BookingConfirmation />} />
               <Route path="thanks" element={<Thanks />} />
             </Route>
@@ -38,8 +38,6 @@ function App() {
               path="/maintenance/dashboard"
               element={<MaintenanceDashboard />}
             />
-            <Route path="resources" element={<Resources />} />
-            <Route path="billing" element={<BillingPage />} />
             <Route
               path="payment-confirmation"
               element={<PaymentConfirmation />}

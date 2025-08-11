@@ -1,5 +1,8 @@
-import { uploadImage } from '@/api/imageService';
-import { createTicket, fetchTicketsByUser } from '@/api/maintenanceService';
+import { uploadImage } from '@/services/imageService';
+import {
+  createTicket,
+  fetchTicketsByUser,
+} from '@/services/maintenanceService';
 import type {
   MaintenanceTicket,
   MaintenanceTicketDTO,
