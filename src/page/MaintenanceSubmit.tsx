@@ -1,3 +1,4 @@
+import { useAuth } from '@/contexts/AuthContext';
 import { uploadImage } from '@/services/imageService';
 import {
   createTicket,
@@ -9,8 +10,6 @@ import type {
 } from '@/type/maintenanceTicket';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-
-const TEMP_USER_ID = 1;
 
 const categoryOptions = [
   'Plumbing',
@@ -40,11 +39,13 @@ export default function MaintenanceSubmit() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
+    if (!user?.id) return; // Wait until we have a user
     const load = async () => {
       try {
-        const userTickets = await fetchTicketsByUser(TEMP_USER_ID);
+        const userTickets = await fetchTicketsByUser(user.id);
         setTickets(userTickets);
       } catch (err) {
         console.error(err);
@@ -52,7 +53,7 @@ export default function MaintenanceSubmit() {
       }
     };
     load();
-  }, []);
+  }, [user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,7 +76,7 @@ export default function MaintenanceSubmit() {
         category: formData.category,
         location: formData.location,
         description: formData.description,
-        userId: TEMP_USER_ID,
+        userId: user?.id || '',
         status: 'open',
         image: imageUrl,
       };

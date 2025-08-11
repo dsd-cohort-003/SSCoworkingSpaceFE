@@ -37,7 +37,15 @@ export default function Header() {
         </button>
 
         {isAuthenticated ? (
-          <UserMenu />
+          <>
+            <button
+              onClick={() => handleNavigate('maintenance')}
+              className="text-gray-600 hover:text-gray-900 transition-colors font-medium text-left"
+            >
+              {LABELS.NAVIGATION.MAINTENANCE}
+            </button>
+            <UserMenu />
+          </>
         ) : (
           <button
             onClick={() => setShowLoginModal(true)}

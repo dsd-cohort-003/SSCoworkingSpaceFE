@@ -19,18 +19,18 @@ export async function fetchTicketById(id: number): Promise<MaintenanceTicket> {
 }
 
 export async function fetchTicketsByUser(
-  userId: number,
+  userId: string,
 ): Promise<MaintenanceTicket[]> {
-  const res = await fetch(`${BASE_URL}/user/${userId}`);
+  const res = await fetch(`${BASE_URL}/user/auth/${userId}`);
   if (!res.ok) throw new Error('Failed to fetch tickets by user');
   return res.json();
 }
 
 // If ticket's "status" field is not marked as "resolved"
 export async function fetchUnresolvedTicketsByUser(
-  userId: number,
+  userId: string,
 ): Promise<MaintenanceTicket[]> {
-  const res = await fetch(`${BASE_URL}/user/${userId}/unresolved`);
+  const res = await fetch(`${BASE_URL}/user/auth/${userId}/unresolved`);
   if (!res.ok) throw new Error('Failed to fetch unresolved tickets');
   return res.json();
 }

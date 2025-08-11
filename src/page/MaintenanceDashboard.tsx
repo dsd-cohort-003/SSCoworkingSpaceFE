@@ -106,7 +106,7 @@ export default function MaintenanceDashboard() {
                 <img
                   src={ticket.image}
                   alt="Ticket"
-                  style={{ maxWidth: '100%', borderRadius: 8, marginTop: 8 }}
+                  style={{ maxHeight: '300px', borderRadius: 8, marginTop: 8 }}
                 />
               )}
               <p style={{ margin: '4px 0' }}>

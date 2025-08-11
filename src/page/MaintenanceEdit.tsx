@@ -1,6 +1,7 @@
 import {
   fetchTicketById,
-  updateTicketAdmin,
+  updateTicket,
+  // updateTicketAdmin,
 } from '@/services/maintenanceService';
 import type { MaintenanceTicket } from '@/type/maintenanceTicket';
 import { useEffect, useState } from 'react';
@@ -47,7 +48,7 @@ export default function MaintenanceEdit() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await updateTicketAdmin(ticket as MaintenanceTicket);
+      await updateTicket(Number(id), ticket);
       alert('Ticket updated');
       navigate('/maintenance/dashboard');
     } catch {
