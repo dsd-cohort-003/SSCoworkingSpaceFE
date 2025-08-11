@@ -213,7 +213,12 @@ function ChooseDesk() {
                             if (fromDate === '') {
                               setFromDate(dateString);
                             } else if (toDate === '') {
-                              setToDate(dateString);
+                              if (new Date(fromDate) > new Date(dateString)) {
+                                setToDate(fromDate);
+                                setFromDate(dateString);
+                              } else {
+                                setToDate(dateString);
+                              }
                             } else {
                               resetBooking();
                               setFromDate(dateString);
