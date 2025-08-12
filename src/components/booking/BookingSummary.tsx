@@ -33,6 +33,7 @@ export default function BookingSummary({
 
   const duration = getDurationInDays();
   const dispatch = useDispatch();
+
   const officePrice = useSelector(
     (state: RootState) => state.officeReservation.resInfo.total,
   ).toLocaleString('en-US', {

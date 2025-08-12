@@ -10,7 +10,7 @@ import useOfficesDesks from '@/hooks/useOfficesDesks';
 import { useParams } from 'react-router';
 import DeskCard from '@/components/booking/DeskCard';
 import { useDispatch } from 'react-redux';
-import { setOffice } from '@/store/slices/officeSlice';
+import { setOffice, setReservation } from '@/store/slices/officeSlice';
 import { useLocationQuery } from '@/hooks/useLocationQuery';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -20,9 +20,12 @@ function ChooseDesk() {
   const { locations } = useLocationQuery();
   const officeId = Number(useParams().officeId);
   const { desks, isLoading, isError } = useOfficesDesks(officeId);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const { getCurrentLocationState } = useBookingFlow();
+
   const {
     fromDate,
     toDate,
@@ -36,15 +39,16 @@ function ChooseDesk() {
   const [dateDisplay, setDateDisplay] = useState(new Date());
 
   const locationState = getCurrentLocationState();
-  const storedOffice = useSelector(
-    (state: RootState) => state.officeReservation.resInfo.resOffice,
+
+  const reservation = useSelector(
+    (state: RootState) => state.officeReservation.resInfo,
   );
+
   const officeName = locationState?.location || 'Office';
   const handleConfirmRequest = () => {
     if (isValidBooking) {
-      navigate('/booking/resources', {
-        state: { location: officeName, fromDate, toDate },
-      });
+      dispatch(setReservation({ fromDate, toDate }));
+      navigate('/booking/resources');
     }
   };
 
@@ -89,11 +93,11 @@ function ChooseDesk() {
   useEffect(() => {
     if (locations.length > 0) {
       const fetchedOffice = locations.find((loc) => loc.id === officeId);
-      if (fetchedOffice?.id !== storedOffice?.id) {
+      if (fetchedOffice?.id !== reservation.resOffice?.id) {
         dispatch(setOffice(fetchedOffice || null));
       }
     }
-  }, [locations, officeId, storedOffice?.id, dispatch]);
+  }, [locations, officeId, reservation.resOffice?.id, dispatch]);
   return (
     <div className="min-h-screen bg-white">
       <HeroSection

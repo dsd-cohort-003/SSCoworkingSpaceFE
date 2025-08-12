@@ -31,23 +31,40 @@ const officeReservationSlice = createSlice({
       state.resInfo.total =
         state.resInfo.desksTotal + state.resInfo.officeTotal;
     },
-
+    removeDesk(state, action) {
+      const idx = state.resInfo.resDesks.findIndex(
+        (desk) => desk.id === action.payload,
+      );
+      if (idx !== -1) {
+        state.resInfo.resDesks.splice(idx, 1);
+      }
+      state.resInfo.desksTotal = state.resInfo.resDesks.reduce(
+        (sum, desk) => sum + (desk.basePrice || 0),
+        0,
+      );
+      state.resInfo.total =
+        state.resInfo.desksTotal + state.resInfo.officeTotal;
+    },
     setOfficeTotal(state, action) {
       if (state.resInfo.resOffice !== null) {
         state.resInfo.officeTotal =
           (state.resInfo.resOffice.price / 31) * action.payload.duration;
       }
     },
-    setStartDate() {},
-    setEndDate() {},
+    setReservation(state, action) {
+      if (action.payload.fromDate && action.payload.toDate) {
+        state.resInfo.startDate = action.payload.fromDate;
+        state.resInfo.endDate = action.payload.toDate;
+      }
+    },
   },
 });
 export const {
   setTotal,
   setDesks,
+  removeDesk,
   setOfficeTotal,
-  setStartDate,
-  setEndDate,
+  setReservation,
   setOffice,
 } = officeReservationSlice.actions;
 export default officeReservationSlice.reducer;

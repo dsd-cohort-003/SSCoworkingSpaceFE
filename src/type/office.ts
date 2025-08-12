@@ -20,7 +20,8 @@ export interface RawLocationData {
   streetAddress: string;
   zipcode: string;
 }
-interface DeskData {
+export interface DeskData {
+  id: number;
   description: string;
   basePrice: number;
   name: string;

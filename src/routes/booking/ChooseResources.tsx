@@ -4,6 +4,9 @@ import { useBookingFlow } from '@/hooks/useBookingFlow';
 import HeroSection from '@/components/ui/HeroSection';
 import Card from '@/components/ui/card';
 import { LABELS } from '@/constants/labels';
+import { useSelector } from 'react-redux';
+
+import type { RootState } from '@/store/store';
 
 interface Resource {
   id: string;
@@ -116,6 +119,10 @@ const mockResources: Resource[] = [
 ];
 
 export default function ChooseResources() {
+  const reservation = useSelector(
+    (state: RootState) => state.officeReservation.resInfo,
+  );
+  console.log(reservation);
   const { goToConfirmation } = useBookingFlow();
   const location = useLocation();
   const bookingData = (location.state as {

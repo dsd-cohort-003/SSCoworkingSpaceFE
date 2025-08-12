@@ -16,7 +16,6 @@ const fetchLocations = async (): Promise<LocationData[]> => {
     streetAddress: office.streetAddress,
     zipCode: office.zipcode,
   }));
-  console.log(data);
   return normalizedData;
 };
 

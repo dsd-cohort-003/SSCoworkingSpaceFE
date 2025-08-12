@@ -33,7 +33,6 @@ export default function LocationCard({
     city === 'Dallas'
       ? LABELS.IMAGES.MAIN_WORKSPACE
       : LABELS.IMAGES.PRIVATE_OFFICE;
-  console.log(location);
   const handleReserve = (id: number) => {
     dispatch(setOffice(location));
     navigate(`/booking/office/${id}/desks`);

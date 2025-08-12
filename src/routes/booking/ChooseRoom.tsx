@@ -6,7 +6,6 @@ import { LABELS } from '../../labels';
 export default function ChooseRoom() {
   const { locations, isLoading, isError } = useLocationQuery();
   const { goToDeskSelection } = useBookingFlow();
-  console.log(locations);
   const handleReserve = (locationId: number) => {
     const location = locations.find((loc) => loc.id === locationId);
 
