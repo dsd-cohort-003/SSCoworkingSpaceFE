@@ -1,4 +1,8 @@
 import { LABELS } from '../../labels';
+import { useDispatch } from 'react-redux';
+// import type { RootState } from '@/store/store';
+import { setOfficeTotal } from '@/store/slices/officeSlice';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/store/store';
 
@@ -28,9 +32,18 @@ export default function BookingSummary({
   };
 
   const duration = getDurationInDays();
+  const dispatch = useDispatch();
   const officePrice = useSelector(
-    (state: RootState) => state.officeReservation.resInfo.resOffice?.price || 0,
-  );
+    (state: RootState) => state.officeReservation.resInfo.officeTotal,
+  ).toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
+  useEffect(() => {
+    if (duration !== 0) {
+      dispatch(setOfficeTotal({ duration }));
+    }
+  }, [duration, dispatch]);
   return (
     <div
       className={`bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 ${className}`}
@@ -94,12 +107,7 @@ export default function BookingSummary({
                 Total Investment
               </span>
               <p className="text-2xl font-light text-gray-900 mt-1">
-                {officePrice
-                  ? ((officePrice / 31) * duration).toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                    })
-                  : '$0.00'}
+                {duration !== 0 ? <span>{officePrice}</span> : '$0.00'}
               </p>
             </div>
             <div className="text-right">

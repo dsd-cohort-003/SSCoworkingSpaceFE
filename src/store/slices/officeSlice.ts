@@ -18,25 +18,18 @@ const officeReservationSlice = createSlice({
     setTotal(state) {
       state.resInfo.total =
         state.resInfo.desksTotal + state.resInfo.officeTotal;
-      console.log(state.resInfo.total);
     },
     setOffice(state, action: { payload: LocationData | null }) {
       state.resInfo.resOffice = action.payload;
-      console.log(action.payload);
     },
     setDeskTotal(state, action) {
       state.resInfo.desksTotal += action.payload;
-
-      console.log(state.resInfo.desksTotal);
     },
     setOfficeTotal(state, action) {
-      state.resInfo.officeTotal = (
-        (state.resInfo.officeTotal / 31) *
-        action.payload.duration
-      ).toLocaleString('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      });
+      if (state.resInfo.resOffice !== null) {
+        state.resInfo.officeTotal =
+          (state.resInfo.resOffice.price / 31) * action.payload.duration;
+      }
     },
     setStartDate() {},
     setEndDate() {},
