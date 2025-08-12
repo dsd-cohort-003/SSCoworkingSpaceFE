@@ -120,23 +120,23 @@ export default function MaintenanceSubmit() {
         fontFamily: 'sans-serif',
       }}
     >
-      <h1 style={{ marginBottom: 20 }}>Submit Maintenance Ticket</h1>
+      <h1 className="text-2xl font-bold mb-6">Submit Maintenance Ticket</h1>
       <form
         onSubmit={handleSubmit}
-        style={{ display: 'flex', flexDirection: 'column', gap: 15 }}
+        className="space-y-4 bg-white p-6 rounded-xl shadow-md"
       >
         <input
           placeholder="Title (required)"
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-          style={{ padding: 10, fontSize: 16 }}
+          className="w-full border rounded-lg px-3 py-2"
         />
         <select
           value={formData.category}
           onChange={(e) =>
             setFormData({ ...formData, category: e.target.value })
           }
-          style={{ padding: 10, fontSize: 16 }}
+          className="w-full border rounded-lg px-3 py-2 cursor-pointer"
         >
           <option value="">Select Category (required)</option>
           {categoryOptions.map((cat) => (
@@ -150,7 +150,7 @@ export default function MaintenanceSubmit() {
           onChange={(e) =>
             setFormData({ ...formData, location: e.target.value })
           }
-          style={{ padding: 10, fontSize: 16 }}
+          className="w-full border rounded-lg px-3 py-2 cursor-pointer"
         >
           <option value="">Select Location (required)</option>
           {locationOptions.map((loc) => (
@@ -166,7 +166,7 @@ export default function MaintenanceSubmit() {
             setFormData({ ...formData, description: e.target.value })
           }
           rows={4}
-          style={{ padding: 10, fontSize: 16 }}
+          className="w-full border rounded-lg px-3 py-2"
         />
         <input
           type="file"
@@ -182,7 +182,7 @@ export default function MaintenanceSubmit() {
         <button
           type="submit"
           disabled={submitting}
-          style={{ padding: 12, fontSize: 16, cursor: 'pointer' }}
+          className="w-full bg-gray-900 text-white py-2 rounded-lg hover:bg-gray-800 cursor-pointer"
         >
           {submitting ? 'Submitting...' : 'Submit'}
         </button>
@@ -190,17 +190,26 @@ export default function MaintenanceSubmit() {
 
       {error && <p style={{ color: 'red', marginTop: 10 }}>{error}</p>}
 
-      <h2 style={{ marginTop: 40 }}>My Tickets</h2>
+      <h2 className="text-xl font-semibold mt-10 mb-4">My Tickets</h2>
+
       {tickets.length === 0 ? (
         <p>No tickets submitted.</p>
       ) : (
-        <ul style={{ paddingLeft: 20 }}>
+        <ul className="space-y-3">
           {tickets.map((t) => (
-            <li key={t.id}>
+            <li
+              key={t.id}
+              className="bg-gray-50 border rounded-lg p-4 flex justify-between items-center"
+            >
               <p>
                 <strong>{t.title}</strong> - {t.status}
               </p>
-              <button onClick={() => handleEdit(t.id)}>Edit</button>
+              <button
+                onClick={() => handleEdit(t.id)}
+                className="text-gray-800 font-bold cursor-pointer"
+              >
+                Edit
+              </button>
             </li>
           ))}
         </ul>
