@@ -12,7 +12,7 @@ import DeskCard from '@/components/booking/DeskCard';
 import { useDispatch } from 'react-redux';
 import { setOffice } from '@/store/slices/officeSlice';
 import { useLocationQuery } from '@/hooks/useLocationQuery';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/store/store';
 
@@ -31,7 +31,9 @@ function ChooseDesk() {
     setToDate,
     setSelectedDate,
     isValidBooking,
+    resetBooking,
   } = useBookingState();
+  const [dateDisplay, setDateDisplay] = useState(new Date());
 
   const locationState = getCurrentLocationState();
   const storedOffice = useSelector(
@@ -46,17 +48,41 @@ function ChooseDesk() {
     }
   };
 
-  const currentDate = new Date();
-  const currentMonth = currentDate.toLocaleString('default', { month: 'long' });
-  const currentYear = currentDate.getFullYear();
+  useEffect(() => {
+    resetBooking();
+    setFromDate(fromDate);
+    setToDate(toDate);
+  }, [fromDate, toDate]);
+
+  const getPreviousMonth = () => {
+    const prevMonth = new Date(
+      dateDisplay.getFullYear(),
+      dateDisplay.getMonth() - 1,
+      1,
+    );
+    setDateDisplay(prevMonth);
+  };
+
+  const getNextMonth = () => {
+    const nextMonth = new Date(
+      dateDisplay.getFullYear(),
+      dateDisplay.getMonth() + 1,
+      1,
+    );
+    setDateDisplay(nextMonth);
+  };
+
+  const today = new Date();
+  const currentMonth = dateDisplay.toLocaleString('default', { month: 'long' });
+  const currentYear = dateDisplay.getFullYear();
   const daysInMonth = new Date(
     currentYear,
-    currentDate.getMonth() + 1,
+    dateDisplay.getMonth() + 1,
     0,
   ).getDate();
   const firstDayOfMonth = new Date(
     currentYear,
-    currentDate.getMonth(),
+    dateDisplay.getMonth(),
     1,
   ).getDay();
 
@@ -124,7 +150,10 @@ function ChooseDesk() {
                       {currentMonth} {currentYear}
                     </h3>
                     <div className="flex space-x-2">
-                      <button className="p-2 rounded-lg hover:bg-white transition-colors">
+                      <button
+                        className="p-2 rounded-lg hover:bg-white transition-colors"
+                        onClick={getPreviousMonth}
+                      >
                         <svg
                           className="w-5 h-5 text-gray-600"
                           fill="none"
@@ -139,7 +168,10 @@ function ChooseDesk() {
                           />
                         </svg>
                       </button>
-                      <button className="p-2 rounded-lg hover:bg-white transition-colors">
+                      <button
+                        className="p-2 rounded-lg hover:bg-white transition-colors"
+                        onClick={getNextMonth}
+                      >
                         <svg
                           className="w-5 h-5 text-gray-600"
                           fill="none"
@@ -177,21 +209,43 @@ function ChooseDesk() {
 
                     {Array.from({ length: daysInMonth }, (_, i) => {
                       const day = i + 1;
-                      const dateString = `${currentYear}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                      const dateString = `${currentYear}-${String(dateDisplay.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                       const isSelected = selectedDate === dateString;
-                      const isToday = day === currentDate.getDate();
+                      const isToDate = toDate === dateString;
+                      const isFromDate = fromDate === dateString;
+                      const isBetween = fromDate
+                        ? fromDate < dateString && toDate > dateString
+                        : false;
 
+                      const isToday =
+                        dateString ===
+                        `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
                       return (
                         <button
                           key={day}
                           className={`h-12 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 ${
-                            isSelected
+                            isSelected || isToDate || isFromDate || isBetween
                               ? 'bg-gray-900 text-white shadow-lg'
                               : isToday
                                 ? 'bg-white text-gray-900 border-2 border-gray-900 shadow-sm'
                                 : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-gray-300'
                           }`}
-                          onClick={() => setSelectedDate(dateString)}
+                          onClick={() => {
+                            setSelectedDate(dateString);
+                            if (fromDate === '') {
+                              setFromDate(dateString);
+                            } else if (toDate === '') {
+                              if (new Date(fromDate) > new Date(dateString)) {
+                                setToDate(fromDate);
+                                setFromDate(dateString);
+                              } else {
+                                setToDate(dateString);
+                              }
+                            } else {
+                              resetBooking();
+                              setFromDate(dateString);
+                            }
+                          }}
                         >
                           {day}
                         </button>
