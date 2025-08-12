@@ -1,3 +1,5 @@
+import type { DeskReservation } from './deskReservation';
+import type { ResourceReservation } from './resourceReservation';
 import type { User } from './user';
 
 export interface Reservation {
@@ -6,5 +8,7 @@ export interface Reservation {
   totalPrice: number;
   createdAt: string;
   confirmationNumber: string;
-  status: string;
+  reservationStatus: string;
+  deskReservation: DeskReservation;
+  resourceReservation: ResourceReservation[];
 }

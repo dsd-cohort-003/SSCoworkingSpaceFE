@@ -16,7 +16,7 @@ import type { Billing } from '@/type/billing';
 import { useNavigate } from 'react-router-dom';
 
 const mockUserName = 'Alice';
-const userId = 1;
+const userId = 2;
 
 const BillingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -37,7 +37,6 @@ const BillingPage: React.FC = () => {
     async function fetchUnpaidBills() {
       try {
         setLoading(true);
-        // Assuming your API endpoint is: GET /api/billing/user/{userId}/unpaid and returns bills with office info
         const data = await fetchUnpaidBillingByUser(userId);
         console.log('Fetched billing data:', data);
         setBills(data);
@@ -45,7 +44,7 @@ const BillingPage: React.FC = () => {
         if (e instanceof Error) {
           setError(e.message);
         } else {
-          setError(String(e)); // fallback for non-Error throws
+          setError(String(e));
         }
       } finally {
         setLoading(false);
@@ -77,9 +76,7 @@ const BillingPage: React.FC = () => {
     setPaymentProcessing(true);
     try {
       const billIds = bills.map((b) => b.id);
-      // Mark all unpaid bills as paid in sequence (for demo)
       for (const billId of billIds) {
-        // Call your backend payment processing and confirmation endpoints
         await processPayment(billId);
         await confirmPayment(billId);
       }
@@ -119,8 +116,45 @@ const BillingPage: React.FC = () => {
         <>
           {bills.map((bill, idx) => {
             console.log(`Rendering bill[${idx}]`, bill);
-            const start = new Date(bill.reservation.startDate).toLocaleString();
-            const end = new Date(bill.reservation.endDate).toLocaleString();
+
+            // Desk reservation info
+            const deskRes = bill.reservation.deskReservation;
+            const deskStart = new Date(deskRes.startDate).toLocaleString();
+            const deskEnd = new Date(deskRes.endDate).toLocaleString();
+            const startDate = new Date(deskRes.startDate);
+            const endDate = new Date(deskRes.endDate);
+            const hours =
+              (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
+            const deskTotal = deskRes.desk.price * hours;
+
+            // Resource reservations info
+            const resourceDetails = bill.reservation.resourceReservation.map(
+              (rr) => {
+                const start = new Date(rr.startDate).toLocaleString();
+                const end = new Date(rr.endDate).toLocaleString();
+                const startDate = new Date(rr.startDate);
+                const endDate = new Date(rr.endDate);
+                const hours =
+                  (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
+                const resourceTotal = rr.resource.price * hours;
+                return (
+                  <div key={rr.id} style={{ marginLeft: 16 }}>
+                    <Typography variant="subtitle2" fontWeight="bold">
+                      {rr.resource.name}
+                    </Typography>
+                    <Typography>Start: {start}</Typography>
+                    <Typography>End: {end}</Typography>
+                    <Typography>
+                      Price: ${rr.resource.price.toFixed(2)}
+                    </Typography>
+                    <Typography>
+                      Total: ${resourceTotal.toFixed(2)} ({hours.toFixed(2)}{' '}
+                      hours × ${rr.resource.price.toFixed(2)}/hr)
+                    </Typography>
+                  </div>
+                );
+              },
+            );
 
             return (
               <div
@@ -129,17 +163,37 @@ const BillingPage: React.FC = () => {
                   border: '1px solid #ccc',
                   padding: '1rem',
                   borderRadius: 8,
+                  marginBottom: '1rem',
                 }}
               >
                 <Typography variant="subtitle1" fontWeight="bold">
-                  {bill.reservation.office.name}
+                  Desk Reservation:
                 </Typography>
-                <Typography>Start: {start}</Typography>
-                <Typography>End: {end}</Typography>
+                <Typography>Desk: {deskRes.desk.description}</Typography>
+                <Typography>Start: {deskStart}</Typography>
+                <Typography>End: {deskEnd}</Typography>
+                <Typography>Price: ${deskRes.desk.price.toFixed(2)}</Typography>
                 <Typography>
-                  Rate: ${bill.reservation.office.price.toFixed(2)}
+                  Total: ${deskTotal.toFixed(2)} ({hours.toFixed(2)} hours × $
+                  {deskRes.desk.price.toFixed(2)}/hr)
                 </Typography>
-                <Typography>Invoice: ${bill.total.toFixed(2)}</Typography>
+
+                {resourceDetails.length > 0 && (
+                  <>
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      marginTop="1rem"
+                    >
+                      Resource Reservations:
+                    </Typography>
+                    {resourceDetails}
+                  </>
+                )}
+
+                <Typography variant="body1" marginTop="1rem">
+                  Invoice Total: ${bill.total.toFixed(2)}
+                </Typography>
               </div>
             );
           })}

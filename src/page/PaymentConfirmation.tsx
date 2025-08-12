@@ -67,39 +67,68 @@ const PaymentConfirmation: React.FC = () => {
         Thank you for your payment. Below are your receipts:
       </Typography>
 
-      {bills.map((bill, idx) => (
-        <Box
-          key={bill.id}
-          mt={3}
-          mb={4}
-          p={2}
-          border="1px solid #ccc"
-          borderRadius={2}
-        >
-          <Typography variant="h6" gutterBottom>
-            Receipt #{idx + 1}
-          </Typography>
-          <Typography>
-            <strong>Office:</strong>{' '}
-            {bill.reservation.office?.name ?? 'Unknown'}
-          </Typography>
-          <Typography>
-            <strong>Start Date:</strong> {bill.reservation.startDate}
-          </Typography>
-          <Typography>
-            <strong>End Date:</strong> {bill.reservation.endDate}
-          </Typography>
-          <Typography>
-            <strong>Rate:</strong> ${bill.reservation.office.price.toFixed(2)}
-          </Typography>
-          <Typography>
-            <strong>Total Paid:</strong> ${bill.total.toFixed(2)}
-          </Typography>
-          <Typography>
-            <strong>Confirmation #:</strong> {bill.id}
-          </Typography>
-        </Box>
-      ))}
+      {bills.map((bill, idx) => {
+        const deskRes = bill.reservation.deskReservation;
+        const desk = deskRes.desk;
+        const startDate = new Date(deskRes.startDate).toLocaleString();
+        const endDate = new Date(deskRes.endDate).toLocaleString();
+
+        return (
+          <Box
+            key={bill.id}
+            mt={3}
+            mb={4}
+            p={2}
+            border="1px solid #ccc"
+            borderRadius={2}
+          >
+            <Typography variant="h6" gutterBottom>
+              Receipt #{idx + 1}
+            </Typography>
+            <Typography>
+              <strong>Desk:</strong>{' '}
+              {desk.description ?? desk.name ?? 'Unknown'}
+            </Typography>
+            <Typography>
+              <strong>Start Date:</strong> {startDate}
+            </Typography>
+            <Typography>
+              <strong>End Date:</strong> {endDate}
+            </Typography>
+
+            {/* Optional: List resource reservations if any */}
+            {bill.reservation.resourceReservation.length > 0 && (
+              <>
+                <Typography variant="subtitle1" mt={2} mb={1}>
+                  Resource Reservations:
+                </Typography>
+                {bill.reservation.resourceReservation.map((rr) => (
+                  <Box key={rr.id} ml={2} mb={1}>
+                    <Typography>
+                      <strong>Resource:</strong> {rr.resource.name}
+                    </Typography>
+                    <Typography>
+                      <strong>Start:</strong>{' '}
+                      {new Date(rr.startDate).toLocaleString()}
+                    </Typography>
+                    <Typography>
+                      <strong>End:</strong>{' '}
+                      {new Date(rr.endDate).toLocaleString()}
+                    </Typography>
+                  </Box>
+                ))}
+              </>
+            )}
+
+            <Typography mt={2}>
+              <strong>Total Paid:</strong> ${bill.total.toFixed(2)}
+            </Typography>
+            <Typography>
+              <strong>Confirmation #:</strong> {bill.id}
+            </Typography>
+          </Box>
+        );
+      })}
     </Box>
   );
 };

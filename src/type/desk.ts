@@ -5,4 +5,5 @@ export interface Desk {
   description: string;
   basePrice: number;
   office: Office;
+  price: number;
 }
