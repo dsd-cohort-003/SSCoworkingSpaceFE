@@ -20,6 +20,15 @@ export default function Header() {
     const NavLinks = () => (
       <>
         <a
+          onClick={() => {
+            handleNavigate('maintenance');
+          }}
+          className="text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
+        >
+          {LABELS.NAVIGATION.MAINTENANCE}
+        </a>
+
+        <a
           href="#contact"
           onClick={() => {
             handleNavigate('#contact');
@@ -31,7 +40,7 @@ export default function Header() {
 
         <button
           onClick={() => handleNavigate('/booking/rooms')}
-          className="text-gray-600 hover:text-gray-900 transition-colors font-medium text-left"
+          className="text-gray-600 hover:text-gray-900 transition-colors font-medium text-left cursor-pointer"
         >
           {LABELS.NAVIGATION.RESERVE_DESK}
         </button>
