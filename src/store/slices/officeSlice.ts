@@ -22,9 +22,16 @@ const officeReservationSlice = createSlice({
     setOffice(state, action: { payload: LocationData | null }) {
       state.resInfo.resOffice = action.payload;
     },
-    setDeskTotal(state, action) {
-      state.resInfo.desksTotal += action.payload;
+    setDesks(state, action) {
+      state.resInfo.resDesks.push(action.payload);
+      state.resInfo.desksTotal = state.resInfo.resDesks.reduce(
+        (sum, desk) => sum + (desk.basePrice || 0),
+        0,
+      );
+      state.resInfo.total =
+        state.resInfo.desksTotal + state.resInfo.officeTotal;
     },
+
     setOfficeTotal(state, action) {
       if (state.resInfo.resOffice !== null) {
         state.resInfo.officeTotal =
@@ -37,7 +44,7 @@ const officeReservationSlice = createSlice({
 });
 export const {
   setTotal,
-  setDeskTotal,
+  setDesks,
   setOfficeTotal,
   setStartDate,
   setEndDate,

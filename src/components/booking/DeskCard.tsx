@@ -4,9 +4,7 @@ import BodyText from '../Text/BodyText';
 import { LABELS } from '../../labels';
 import Button from '../global/Button';
 import { useDispatch } from 'react-redux';
-// import { useSelector } from 'react-redux';
-import { setDeskTotal } from '@/store/slices/officeSlice';
-// import type { RootState } from '@/store/store';
+import { setDesks } from '@/store/slices/officeSlice';
 interface DeskCardProps {
   key: number;
   officeDesk: OfficeDesk;
@@ -26,7 +24,6 @@ function DeskCard({
     basePrice,
     office: { name },
   } = officeDesk;
-
   const dispatch = useDispatch();
   // const { total, officeTotal, desksTotal } = useSelector(
   //   (state: RootState) => state.officeReservation.resInfo,
@@ -44,7 +41,7 @@ function DeskCard({
             : { SRC: '', ALT: '' };
 
   const onReserve = (basePrice: number) => {
-    dispatch(setDeskTotal(basePrice));
+    dispatch(setDesks({ description, basePrice, name }));
   };
 
   return (

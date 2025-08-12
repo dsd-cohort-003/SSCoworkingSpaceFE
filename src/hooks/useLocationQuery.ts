@@ -13,10 +13,10 @@ const fetchLocations = async (): Promise<LocationData[]> => {
     size: Number(office.size),
     state: office.state,
     city: office.city,
-    streetAddress: office.street_address,
+    streetAddress: office.streetAddress,
     zipCode: office.zipcode,
   }));
-
+  console.log(data);
   return normalizedData;
 };
 

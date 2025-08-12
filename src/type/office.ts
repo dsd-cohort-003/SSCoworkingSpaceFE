@@ -17,8 +17,13 @@ export interface RawLocationData {
   size: string;
   state: string;
   city: string;
-  street_address: string;
+  streetAddress: string;
   zipcode: string;
+}
+interface DeskData {
+  description: string;
+  basePrice: number;
+  name: string;
 }
 interface ReservationInfo {
   total: number | 0;
@@ -26,7 +31,7 @@ interface ReservationInfo {
   desksTotal: number | 0;
   startDate: Date | null;
   endDate: Date | null;
-  resDesks: LocationData | [];
+  resDesks: DeskData[];
   resOffice: LocationData | null;
 }
 export interface officeReservationState {

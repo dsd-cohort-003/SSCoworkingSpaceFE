@@ -22,7 +22,7 @@ export default function LocationCard({
     city,
     state,
     zipCode,
-    // price,
+    price,
   } = location;
 
   const dispatch = useDispatch();
@@ -33,6 +33,7 @@ export default function LocationCard({
     city === 'Dallas'
       ? LABELS.IMAGES.MAIN_WORKSPACE
       : LABELS.IMAGES.PRIVATE_OFFICE;
+  console.log(location);
   const handleReserve = (id: number) => {
     dispatch(setOffice(location));
     navigate(`/booking/office/${id}/desks`);
@@ -151,7 +152,10 @@ export default function LocationCard({
                 {LABELS.LOCATIONS.TOTAL_INVESTMENT_LABEL}
               </span>
               <p className="text-3xl font-light text-gray-900 mt-1">
-                {locationData.TOTAL}
+                {price.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                })}
               </p>
             </div>
             <div className="text-right">
