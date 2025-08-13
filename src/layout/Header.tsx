@@ -1,20 +1,38 @@
 import { NavLink, useNavigate } from 'react-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LABELS } from '../labels';
 import { useAuth } from '../contexts/AuthContext';
 import LoginModal from '../components/auth/LoginModal';
 import UserMenu from '../components/auth/UserMenu';
 import Hamburger from '../components/global/Hamburger';
+import { fetchUserByAuthId } from '@/services/userService';
 export default function Header() {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [role, setRole] = useState<string | null>(null);
 
   const handleNavigate = (path: string) => {
     setIsOpen(false);
     navigate(path);
   };
+
+  useEffect(() => {
+    const loadUser = async () => {
+      if (!user?.id) return;
+      try {
+        console.log(user);
+        const data = await fetchUserByAuthId(user.id);
+        console.log(data);
+        setRole(data?.role || null);
+      } catch (error) {
+        console.error('Failed to fetch user role', error);
+        setRole(null);
+      }
+    };
+    loadUser();
+  }, [user]);
 
   {
     const NavLinks = () => (
@@ -44,6 +62,14 @@ export default function Header() {
             >
               {LABELS.NAVIGATION.MAINTENANCE}
             </button>
+            {role === 'admin' && (
+              <button
+                onClick={() => handleNavigate('maintenance/dashboard')}
+                className="text-gray-600 hover:text-gray-900 transition-colors font-medium text-left"
+              >
+                {LABELS.NAVIGATION.MAINTENANCE_DASHBOARD}
+              </button>
+            )}
             <UserMenu />
           </>
         ) : (

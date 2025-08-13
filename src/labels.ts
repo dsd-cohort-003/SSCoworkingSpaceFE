@@ -15,6 +15,7 @@ export const LABELS = {
     RESERVE_RESOURCES: 'Reserve Resource',
     RETURN_RESOURCES: 'Return Resources',
     MAINTENANCE: 'Request Maintenance',
+    MAINTENANCE_DASHBOARD: 'Maintenance Dashboard',
     LOGIN: 'Login',
     LOGOUT: 'Logout',
     MY_ACCOUNT: 'My Account',

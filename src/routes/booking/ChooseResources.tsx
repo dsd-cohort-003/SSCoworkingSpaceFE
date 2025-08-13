@@ -70,11 +70,12 @@ export default function ChooseResources() {
     setCart((prev) => {
       const existing = prev.find((item) => item.id === resource.id);
       if (existing) {
-        return prev.map((item) =>
-          item.id === resource.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item,
-        );
+        return prev;
+        // return prev.map((item) =>
+        //   item.id === resource.id
+        //     ? { ...item, quantity: item.quantity + 1 }
+        //     : item,
+        // );
       }
       return [...prev, { ...resource, quantity: 1 }];
     });
@@ -89,6 +90,7 @@ export default function ChooseResources() {
       removeFromCart(resourceId);
       return;
     }
+    quantity = 1; // Force quantity to 1 since resources are booked per unit
     setCart((prev) =>
       prev.map((item) =>
         item.id === resourceId ? { ...item, quantity } : item,
