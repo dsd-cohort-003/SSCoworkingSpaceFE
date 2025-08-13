@@ -1,4 +1,10 @@
-import { fetchTicketById, updateTicketAdmin } from '@/api/maintenanceService';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  fetchTicketById,
+  updateTicket,
+  // updateTicketAdmin,
+} from '@/services/maintenanceService';
+import { fetchUserByAuthId } from '@/services/userService';
 import type { MaintenanceTicket } from '@/type/maintenanceTicket';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -11,6 +17,7 @@ export default function MaintenanceEdit() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const { user } = useAuth();
 
   const assigneeOptions = [
     'maintenance1@example.com',
@@ -20,9 +27,16 @@ export default function MaintenanceEdit() {
   const statusOptions = ['open', 'in_progress', 'closed'];
 
   useEffect(() => {
+    if (!user?.id) return;
     const load = async () => {
       try {
         const data = await fetchTicketById(Number(id));
+        try {
+          const userData = await fetchUserByAuthId(user.id);
+          setIsAdmin(userData?.role === 'admin');
+        } catch {
+          setError('Failed to load user data');
+        }
         setTicket(data);
       } catch {
         setError('Failed to load ticket');
@@ -31,7 +45,7 @@ export default function MaintenanceEdit() {
       }
     };
     load();
-  }, [id]);
+  }, [id, user]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -44,9 +58,10 @@ export default function MaintenanceEdit() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await updateTicketAdmin(ticket as MaintenanceTicket);
+      await updateTicket(Number(id), ticket);
       alert('Ticket updated');
-      navigate('/maintenance/dashboard');
+      if (isAdmin) navigate('/maintenance/dashboard');
+      else navigate('/maintenance');
     } catch {
       setError('Update failed');
     }
@@ -82,7 +97,7 @@ export default function MaintenanceEdit() {
         Edit Maintenance Ticket
       </h1>
 
-      <div style={{ marginBottom: 20 }}>
+      {/* <div style={{ marginBottom: 20 }}>
         <label style={{ fontSize: 14 }}>
           <input
             type="checkbox"
@@ -92,7 +107,7 @@ export default function MaintenanceEdit() {
           />
           Enable Admin Mode
         </label>
-      </div>
+      </div> */}
 
       <form
         onSubmit={handleSubmit}

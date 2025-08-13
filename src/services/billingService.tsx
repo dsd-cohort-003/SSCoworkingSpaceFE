@@ -14,16 +14,16 @@ export async function fetchBillingById(id: number): Promise<Billing> {
   return res.json();
 }
 
-export async function fetchBillingByUser(userId: number): Promise<Billing[]> {
-  const res = await fetch(`${BASE_URL}/user/${userId}`);
+export async function fetchBillingByUser(userId: string): Promise<Billing[]> {
+  const res = await fetch(`${BASE_URL}/user/auth/${userId}`);
   if (!res.ok) throw new Error('Failed to fetch billing by user');
   return res.json();
 }
 
 export async function fetchUnpaidBillingByUser(
-  userId: number,
+  userId: string,
 ): Promise<Billing[]> {
-  const res = await fetch(`${BASE_URL}/user/${userId}/unpaid`);
+  const res = await fetch(`${BASE_URL}/user/auth/${userId}/unpaid`);
   if (!res.ok) throw new Error('Failed to fetch unpaid billing');
   return res.json();
 }
@@ -43,14 +43,10 @@ export async function confirmPayment(billId: number): Promise<void> {
 }
 
 // Create new billing entry
-export async function createBilling(
-  reservationId: number,
-  userId: number,
-): Promise<Billing> {
-  const res = await fetch(`${BASE_URL}/generate/{reservationId}`, {
+export async function createBilling(reservationId: number): Promise<Billing> {
+  const res = await fetch(`${BASE_URL}/generate/${reservationId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ reservationId, userId }),
   });
   if (!res.ok) throw new Error('Failed to create billing entry');
   return res.json();

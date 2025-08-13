@@ -9,3 +9,7 @@ export interface Resource {
   category: string;
   office: Office;
 }
+
+export interface CartItem extends Resource {
+  quantity: number;
+}

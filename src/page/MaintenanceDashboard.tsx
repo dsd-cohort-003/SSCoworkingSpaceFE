@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { deleteTicket, fetchAllTickets } from '../api/maintenanceService';
+import { deleteTicket, fetchAllTickets } from '../services/maintenanceService';
 import type { MaintenanceTicket } from '../type/maintenanceTicket';
 import { useNavigate } from 'react-router';
 
@@ -106,7 +106,7 @@ export default function MaintenanceDashboard() {
                 <img
                   src={ticket.image}
                   alt="Ticket"
-                  style={{ maxWidth: '100%', borderRadius: 8, marginTop: 8 }}
+                  style={{ maxHeight: '300px', borderRadius: 8, marginTop: 8 }}
                 />
               )}
               <p style={{ margin: '4px 0' }}>

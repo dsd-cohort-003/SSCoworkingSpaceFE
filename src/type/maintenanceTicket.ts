@@ -13,7 +13,7 @@ export interface MaintenanceTicket {
 }
 
 export interface MaintenanceTicketDTO {
-  userId: number; // This is the user ID of the person submitting the ticket
+  userId: string; // This is the user ID of the person submitting the ticket
   title: string;
   // userId: number;
   status: string; // 'open' | 'in_progress' | 'closed'

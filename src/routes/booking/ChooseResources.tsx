@@ -1,122 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useBookingFlow } from '@/hooks/useBookingFlow';
 import HeroSection from '@/components/ui/HeroSection';
 import Card from '@/components/ui/card';
 import { LABELS } from '@/constants/labels';
-
-interface Resource {
-  id: string;
-  name: string;
-  category: 'television' | 'projector' | 'monitor';
-  price: number;
-  description: string;
-  image: string;
-  available: boolean;
-  specifications: string[];
-}
-
-interface CartItem extends Resource {
-  quantity: number;
-}
+import { submitReservation } from '@/services/reservationService';
+import type { ResourceReservationDTO } from '@/type/resourceReservation';
+import type { Reservation, ReservationDTO } from '@/type/reservation';
+import type { DeskReservationDTO } from '@/type/deskReservation';
+import { createBilling } from '@/services/billingService';
+import { useAuth } from '@/contexts/AuthContext';
+import type { CartItem, Resource } from '@/type/resource';
+import { fetchAllResources } from '@/services/resourceService';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/store/store';
 
 type SortOption = 'price-asc' | 'price-desc' | 'name';
 
-const mockResources: Resource[] = [
-  {
-    id: 'tv-1',
-    name: '65" 4K Smart TV',
-    category: 'television',
-    price: 45,
-    description: 'Premium 4K Smart TV with wireless casting capabilities',
-    image: '/images/tv-placeholder.jpg',
-    available: true,
-    specifications: [
-      '4K Ultra HD',
-      'Smart TV Features',
-      'Wireless Casting',
-      'HDMI Ports',
-    ],
-  },
-  {
-    id: 'tv-2',
-    name: '55" Conference Display',
-    category: 'television',
-    price: 35,
-    description: 'Professional conference room display with touch capabilities',
-    image: '/images/tv-placeholder.jpg',
-    available: true,
-    specifications: [
-      'Full HD',
-      'Touch Screen',
-      'Conference Features',
-      'Multiple Inputs',
-    ],
-  },
-  {
-    id: 'proj-1',
-    name: '4K Laser Projector',
-    category: 'projector',
-    price: 75,
-    description: 'High-end laser projector for presentations and media',
-    image: '/images/projector-placeholder.jpg',
-    available: true,
-    specifications: [
-      '4K Resolution',
-      'Laser Technology',
-      '3000 Lumens',
-      'Wireless Connection',
-    ],
-  },
-  {
-    id: 'proj-2',
-    name: 'Portable Projector',
-    category: 'projector',
-    price: 25,
-    description: 'Compact portable projector for small meetings',
-    image: '/images/projector-placeholder.jpg',
-    available: false,
-    specifications: [
-      '1080p HD',
-      'Portable Design',
-      '1500 Lumens',
-      'USB-C Connection',
-    ],
-  },
-  {
-    id: 'mon-1',
-    name: '32" 4K Monitor',
-    category: 'monitor',
-    price: 30,
-    description: 'Professional 4K monitor with color accuracy',
-    image: '/images/monitor-placeholder.jpg',
-    available: true,
-    specifications: [
-      '4K UHD',
-      'Color Accurate',
-      'USB-C Hub',
-      'Adjustable Stand',
-    ],
-  },
-  {
-    id: 'mon-2',
-    name: '27" Ultrawide Monitor',
-    category: 'monitor',
-    price: 40,
-    description: 'Ultrawide monitor perfect for productivity',
-    image: '/images/monitor-placeholder.jpg',
-    available: true,
-    specifications: [
-      'Ultrawide 21:9',
-      'QHD Resolution',
-      'Curved Display',
-      'Multiple Ports',
-    ],
-  },
-];
-
 export default function ChooseResources() {
-  const { goToConfirmation } = useBookingFlow();
+  const { goToBilling /*, goToConfirmReservation*/ } = useBookingFlow();
+  const reservation = useSelector(
+    (state: RootState) => state.officeReservation.resInfo,
+  );
+  console.log('reservation data: ', reservation);
+  // const { goToConfirmation } = useBookingFlow();
   const location = useLocation();
   const bookingData = (location.state as {
     location: string;
@@ -127,62 +34,52 @@ export default function ChooseResources() {
     fromDate: '',
     toDate: '',
   };
+  console.log('location state:', location.state);
+  console.log('booking data:', bookingData);
   const officeName = bookingData.location;
-  const fromDate = bookingData.fromDate;
-  const toDate = bookingData.toDate;
+  const fromDate = reservation.startDate;
+  const toDate = reservation.endDate;
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [showAvailableOnly, setShowAvailableOnly] = useState(true);
   const [sortBy, setSortBy] = useState<SortOption>('name');
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [filteredResources, setFilteredResources] = useState<Resource[]>([]);
 
-  const filteredResources = mockResources
-    .filter((resource) => {
-      const matchesSearch =
-        resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        resource.description.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory =
-        selectedCategory === 'all' || resource.category === selectedCategory;
-      const matchesAvailability = !showAvailableOnly || resource.available;
+  const { user } = useAuth();
 
-      return matchesSearch && matchesCategory && matchesAvailability;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case 'price-asc':
-          return a.price - b.price;
-        case 'price-desc':
-          return b.price - a.price;
-        case 'name':
-        default:
-          return a.name.localeCompare(b.name);
-      }
+  useEffect(() => {
+    fetchAllResources().then((resources) => {
+      setFilteredResources(resources);
     });
+  }, []);
 
   const addToCart = (resource: Resource) => {
     setCart((prev) => {
       const existing = prev.find((item) => item.id === resource.id);
       if (existing) {
-        return prev.map((item) =>
-          item.id === resource.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item,
-        );
+        return prev;
+        // return prev.map((item) =>
+        //   item.id === resource.id
+        //     ? { ...item, quantity: item.quantity + 1 }
+        //     : item,
+        // );
       }
       return [...prev, { ...resource, quantity: 1 }];
     });
   };
 
-  const removeFromCart = (resourceId: string) => {
+  const removeFromCart = (resourceId: number) => {
     setCart((prev) => prev.filter((item) => item.id !== resourceId));
   };
 
-  const updateQuantity = (resourceId: string, quantity: number) => {
+  const updateQuantity = (resourceId: number, quantity: number) => {
     if (quantity === 0) {
       removeFromCart(resourceId);
       return;
     }
+    quantity = 1; // Force quantity to 1 since resources are booked per unit
     setCart((prev) =>
       prev.map((item) =>
         item.id === resourceId ? { ...item, quantity } : item,
@@ -195,16 +92,54 @@ export default function ChooseResources() {
   };
 
   const handleConfirmRequest = () => {
-    goToConfirmation({
-      location: officeName,
-      fromDate,
-      toDate,
-      resources: cart,
+    console.log(bookingData);
+    // Submit reservation
+    const reservationDTO: ReservationDTO = {
+      authUserId: user?.id || '', // empty if no user
+      totalPrice: 1, // TODO - calculate total price based on cart
+      deskReservation: {
+        id: 1, // TODO - fetch actual desk ID
+        startDate: fromDate,
+        endDate: toDate,
+      } as DeskReservationDTO,
+      resourceReservations: cart.map((item) => ({
+        id: item.id, // TODO - implement fetching resource's ID once they are no longer hardcoded
+        quantity: item.quantity,
+        startDate: fromDate,
+        endDate: toDate,
+      })) as ResourceReservationDTO[],
+      description: '',
+    };
+    // Submit reservation request
+    submitReservation(reservationDTO).then((res: Reservation) => {
+      // Submit/generate bill
+      createBilling(res.id);
+      // Redirect to billing page
+      goToBilling({
+        location: officeName,
+        fromDate: fromDate?.toString(),
+        toDate: toDate?.toString(),
+        resources: cart,
+      });
+      // TODO move
+      // goToConfirmReservation({
+      //   location: officeName,
+      //   fromDate,
+      //   toDate,
+      //   resources: cart,
+      // });
+
+      goToConfirmation({
+        location: officeName,
+        fromDate,
+        toDate,
+        resources: cart,
+      });
     });
   };
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
+  const getCategoryIcon = (type: string) => {
+    switch (type.toLowerCase()) {
       case 'television':
         return (
           <svg
@@ -253,6 +188,7 @@ export default function ChooseResources() {
             />
           </svg>
         );
+      // TODO add more
       default:
         return null;
     }
@@ -403,17 +339,17 @@ export default function ChooseResources() {
                 {filteredResources.map((resource) => (
                   <Card key={resource.id} hover padding="md">
                     <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mb-6 rounded-lg">
-                      {getCategoryIcon(resource.category)}
-                      {!resource.available && (
-                        <div className="absolute top-4 right-4 bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium">
-                          {LABELS.BOOKING.LABELS.UNAVAILABLE}
-                        </div>
-                      )}
-                      {resource.available && (
-                        <div className="absolute top-4 right-4 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
-                          {LABELS.BOOKING.LABELS.AVAILABLE}
-                        </div>
-                      )}
+                      {getCategoryIcon(resource.type)}
+                      {/* {!resource.available && ( */}
+                      <div className="absolute top-4 right-4 bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium">
+                        {LABELS.BOOKING.LABELS.UNAVAILABLE}
+                      </div>
+                      {/* )} */}
+                      {/* {resource.available && ( */}
+                      <div className="absolute top-4 right-4 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+                        {LABELS.BOOKING.LABELS.AVAILABLE}
+                      </div>
+                      {/* )} */}
                     </div>
 
                     <h3 className="text-xl font-medium text-gray-900 mb-2">
@@ -423,7 +359,7 @@ export default function ChooseResources() {
                       {resource.description}
                     </p>
 
-                    <div className="mb-4">
+                    {/* <div className="mb-4">
                       <h4 className="text-sm font-medium text-gray-700 mb-2">
                         Specifications
                       </h4>
@@ -437,7 +373,7 @@ export default function ChooseResources() {
                           </span>
                         ))}
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="flex items-center justify-between">
                       <div className="text-2xl font-light text-gray-900">
@@ -446,11 +382,11 @@ export default function ChooseResources() {
                       </div>
                       <button
                         onClick={() => addToCart(resource)}
-                        disabled={!resource.available}
+                        // disabled={!resource.available}
                         className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
-                          resource.available
-                            ? 'bg-gray-900 text-white hover:bg-gray-800 hover:shadow-lg'
-                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                          // resource.available ?
+                          'bg-gray-900 text-white hover:bg-gray-800 hover:shadow-lg'
+                          // : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                         }`}
                       >
                         {LABELS.ACTIONS.ADD}

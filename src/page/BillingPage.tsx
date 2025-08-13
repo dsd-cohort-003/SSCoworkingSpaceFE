@@ -3,7 +3,7 @@ import {
   Button,
   Stack,
   Typography,
-  Link,
+  // Link,
   TextField,
   Alert,
 } from '@mui/material';
@@ -11,12 +11,10 @@ import {
   confirmPayment,
   fetchUnpaidBillingByUser,
   processPayment,
-} from '@/api/billingService';
+} from '@/services/billingService';
 import type { Billing } from '@/type/billing';
-import { useNavigate } from 'react-router-dom';
-
-const mockUserName = 'Alice';
-const userId = 2;
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 const BillingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -32,12 +30,15 @@ const BillingPage: React.FC = () => {
   const [cardNumber, setCardNumber] = useState('');
   const [expDate, setExpDate] = useState('');
   const [cvc, setCvc] = useState('');
+  const { user } = useAuth();
+  const location = useLocation();
 
   useEffect(() => {
+    if (!user?.id) return;
     async function fetchUnpaidBills() {
       try {
         setLoading(true);
-        const data = await fetchUnpaidBillingByUser(userId);
+        const data = await fetchUnpaidBillingByUser(user?.id || '');
         console.log('Fetched billing data:', data);
         setBills(data);
       } catch (e: unknown) {
@@ -51,7 +52,7 @@ const BillingPage: React.FC = () => {
       }
     }
     fetchUnpaidBills();
-  }, []);
+  }, [user, location.key]);
 
   const totalAmount = bills.reduce((acc, bill) => acc + bill.total, 0);
 
@@ -108,7 +109,7 @@ const BillingPage: React.FC = () => {
       spacing={2}
       style={{ padding: '2rem', maxWidth: 600, margin: 'auto' }}
     >
-      <Typography variant="h5">{mockUserName}'s Bills</Typography>
+      <Typography variant="h5">{user?.name}'s Bills</Typography>
 
       {bills.length === 0 ? (
         <Typography>No unpaid bills so far!</Typography>
@@ -128,7 +129,7 @@ const BillingPage: React.FC = () => {
             const deskTotal = deskRes.desk.price * hours;
 
             // Resource reservations info
-            const resourceDetails = bill.reservation.resourceReservation.map(
+            const resourceDetails = bill.reservation.resourceReservations.map(
               (rr) => {
                 const start = new Date(rr.startDate).toLocaleString();
                 const end = new Date(rr.endDate).toLocaleString();
@@ -264,13 +265,13 @@ const BillingPage: React.FC = () => {
         {paymentProcessing ? 'Processing...' : 'Pay Now'}
       </Button>
 
-      <Link
+      {/* <Link
         href="#"
         underline="hover"
         style={{ marginTop: '1rem', textAlign: 'center' }}
       >
         Browse old bills
-      </Link>
+      </Link> */}
     </Stack>
   );
 };

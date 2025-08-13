@@ -1,18 +1,28 @@
+import type { CartItem } from '@/type/resource';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-export interface CartItem {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  quantity: number;
-}
+// export interface CartItem {
+//   id: string;
+//   name: string;
+//   category: string;
+//   price: number;
+//   quantity: number;
+// }
 
 export interface BookingData {
   location: string;
   fromDate: string;
   toDate: string;
   resources?: CartItem[];
+}
+
+export interface BookingDetails {
+  location: string;
+  fromDate: string;
+  toDate: string;
+  resources?: CartItem[];
+  confirmationNumber: string;
+  reservationStatus: string;
 }
 
 export interface LocationState {
@@ -37,6 +47,18 @@ export const useBookingFlow = () => {
     });
   };
 
+  const goToBilling = (bookingData: BookingData) => {
+    navigate('/booking/billing', {
+      state: bookingData,
+    });
+  };
+
+  const goToConfirmReservation = (bookingData: BookingData) => {
+    navigate('/booking/confirm-reservation', {
+      state: bookingData,
+    });
+  };
+
   const goToConfirmation = (bookingData: BookingData) => {
     navigate('/booking/confirmation', {
       state: bookingData,
@@ -55,6 +77,8 @@ export const useBookingFlow = () => {
     getCurrentLocationState,
     goToRoomSelection,
     goToDeskSelection,
+    goToBilling,
+    goToConfirmReservation,
     goToConfirmation,
     goToHomepage,
     goBack,

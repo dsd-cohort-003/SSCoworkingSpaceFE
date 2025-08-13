@@ -5,7 +5,14 @@ export interface ResourceReservation {
   id: number;
   resource: Resource;
   reservation?: Reservation; // Optional to avoid infinte deserialization
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
   status: string;
+}
+
+export interface ResourceReservationDTO {
+  id: number;
+  quantity: number;
+  startDate: Date;
+  endDate: Date;
 }
