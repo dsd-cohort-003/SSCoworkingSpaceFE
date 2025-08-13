@@ -5,9 +5,8 @@ import HeroSection from '@/components/ui/HeroSection';
 import Card from '@/components/ui/card';
 import { LABELS } from '@/constants/labels';
 import { useSelector } from 'react-redux';
-
 import type { RootState } from '@/store/store';
-
+import { useAvailableResources } from '../../hooks/useAvailableResources';
 interface Resource {
   id: string;
   name: string;
@@ -119,10 +118,20 @@ const mockResources: Resource[] = [
 ];
 
 export default function ChooseResources() {
-  const reservation = useSelector(
+  const { startDate, endDate, resOffice } = useSelector(
     (state: RootState) => state.officeReservation.resInfo,
   );
-  console.log(reservation);
+  const officeId = resOffice?.id;
+  const {
+    data: resources,
+    isLoading,
+    isError,
+    error,
+    isEnabled,
+  } = useAvailableResources(officeId, startDate, endDate);
+  console.log(typeof startDate, endDate, officeId);
+  console.log(resources, isLoading, isError, error);
+  console.log(isEnabled, Boolean(officeId && startDate && endDate));
   const { goToConfirmation } = useBookingFlow();
   const location = useLocation();
   const bookingData = (location.state as {
@@ -295,7 +304,6 @@ export default function ChooseResources() {
           text: 'Step 3 of 4: Select Resources',
         }}
       />
-
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">

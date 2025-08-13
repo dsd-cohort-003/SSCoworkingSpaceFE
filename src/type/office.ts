@@ -30,8 +30,8 @@ interface ReservationInfo {
   total: number | 0;
   officeTotal: number | 0;
   desksTotal: number | 0;
-  startDate: Date | null;
-  endDate: Date | null;
+  startDate: Date | string;
+  endDate: Date | string;
   resDesks: DeskData[];
   resOffice: LocationData | null;
 }
