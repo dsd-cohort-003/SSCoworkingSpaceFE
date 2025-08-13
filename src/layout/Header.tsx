@@ -22,9 +22,7 @@ export default function Header() {
     const loadUser = async () => {
       if (!user?.id) return;
       try {
-        console.log(user);
         const data = await fetchUserByAuthId(user.id);
-        console.log(data);
         setRole(data?.role || null);
       } catch (error) {
         console.error('Failed to fetch user role', error);
@@ -37,15 +35,6 @@ export default function Header() {
   {
     const NavLinks = () => (
       <>
-        <a
-          onClick={() => {
-            handleNavigate('maintenance');
-          }}
-          className="text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
-        >
-          {LABELS.NAVIGATION.MAINTENANCE}
-        </a>
-
         <a
           href="#contact"
           onClick={() => {

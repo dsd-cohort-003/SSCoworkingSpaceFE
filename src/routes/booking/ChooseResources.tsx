@@ -103,7 +103,6 @@ export default function ChooseResources() {
   };
 
   const handleConfirmRequest = () => {
-    console.log(user);
     // Submit reservation
     const reservation: ReservationDTO = {
       authUserId: user?.id || '', // empty if no user

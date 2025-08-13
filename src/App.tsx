@@ -38,9 +38,7 @@ function AppRoutes() {
     const loadUser = async () => {
       if (!user?.id) return;
       try {
-        console.log(user);
         const data = await fetchUserByAuthId(user.id);
-        console.log(data);
         setRole(data?.role || null);
       } catch (error) {
         console.error('Failed to fetch user role', error);
