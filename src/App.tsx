@@ -17,6 +17,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ProtectedRoute from './routes/ProtectedRoute.tsx';
 import { fetchUserByAuthId } from './services/userService.tsx';
 import { useEffect, useState } from 'react';
+import ConfirmBooking from './routes/booking/ConfirmBooking.tsx';
 
 import { store } from './store/store.ts';
 import { Provider } from 'react-redux';
@@ -59,9 +60,11 @@ function AppRoutes() {
         <Route path="booking" element={<BookingLayout />}>
           <Route path="rooms" element={<ChooseRoom />} />
           <Route path="office/:officeId/desks" element={<ChooseDesk />} />
+          <Route path="desks" element={<ChooseDesk />} />
           <Route path="resources" element={<ChooseResources />} />
           <Route path="billing" element={<BillingPage />} />
           <Route path="confirmation" element={<BookingConfirmation />} />
+          <Route path="confirm-reservation" element={<ConfirmBooking />} />
           <Route path="thanks" element={<Thanks />} />
         </Route>
         <Route path="maintenance" element={<MaintenanceTicketing />} />

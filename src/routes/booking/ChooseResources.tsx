@@ -18,7 +18,7 @@ import type { RootState } from '@/store/store';
 type SortOption = 'price-asc' | 'price-desc' | 'name';
 
 export default function ChooseResources() {
-  const { goToBilling } = useBookingFlow();
+  const { goToBilling, goToConfirmReservation } = useBookingFlow();
   const reservation = useSelector(
     (state: RootState) => state.officeReservation.resInfo,
   );
@@ -138,14 +138,21 @@ export default function ChooseResources() {
         toDate,
         resources: cart,
       });
-    });
+      // TODO move
+      goToConfirmReservation({
+        location: officeName,
+        fromDate,
+        toDate,
+        resources: cart,
+      });
 
-    // goToConfirmation({
-    //   location: officeName,
-    //   fromDate,
-    //   toDate,
-    //   resources: cart,
-    // });
+      // goToConfirmation({
+      //   location: officeName,
+      //   fromDate,
+      //   toDate,
+      //   resources: cart,
+      // });
+    });
   };
 
   const getCategoryIcon = (type: string) => {

@@ -1,10 +1,17 @@
-import { useLocation } from 'react-router-dom';
 import type { BookingData } from '@/hooks/useBookingFlow';
+import { useBookingFlow } from '@/hooks/useBookingFlow';
 import Card from '@/components/ui/card';
 import PriceBreakdown from '@/components/ui/PriceBreakdown';
+import { useLocation } from 'react-router';
+import { useMutation } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
+import { useState, useEffect } from 'react';
 
-export default function BookingConfirmation() {
+export default function ConfirmBooking() {
   const location = useLocation();
+  const [username, setUsername] = useState('');
+  const { goToConfirmation, goToHomepage } = useBookingFlow();
+
   const bookingData = (location.state as BookingData) || {
     location: 'Office',
     fromDate: '',
@@ -12,10 +19,29 @@ export default function BookingConfirmation() {
     resources: [],
   };
 
+  useEffect(() => {
+    const getSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      const session = data.session;
+      setUsername(session?.user.user_metadata.full_name);
+    };
+
+    getSession();
+  }, []);
+
+  const officeName = bookingData.location;
+  const fromDate = bookingData.fromDate;
+  const toDate = bookingData.toDate;
+  const resources = bookingData.resources;
+
+  resources?.forEach((resource) => console.log(resource));
+
   const bookingDetails = {
     ...bookingData,
-    //confirmationNumber: `SS${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-    confirmationNumber: location.state.confirmationNumber,
+    /* confirmationNumber: `SS${Math.random()
+      .toString(36)
+      .substr(2, 9)
+      .toUpperCase()}`, */
   };
 
   const getDurationInDays = () => {
@@ -32,60 +58,89 @@ export default function BookingConfirmation() {
     (total, resource) => total + resource.price * resource.quantity * duration,
     0,
   );
+
   const totalCost = workspaceCost + resourcesCost;
 
+  /* const handleConfirmRequest = (data: ) => {
+    goToConfirmation({
+      location: officeName,
+      fromDate,
+      toDate,
+      resources,
+      confirmationNumber: data.confirmationNumber,
+    });
+  }; */
+
+  const handleCancelConfirm = () => {
+    if (window.confirm('Would you like to cancel reservation?')) {
+      bookingData.location = '';
+      bookingData.toDate = '';
+      bookingData.fromDate = '';
+      bookingData.resources = [];
+      goToHomepage();
+    }
+  };
+
+  interface NewReservation {
+    username: string;
+    totalPrice: number;
+    deskId: number;
+    startDate: string;
+    endDate: string;
+    resourceIds: number[];
+  }
+
+  interface User {
+    id: number;
+    username: string;
+    email: string;
+    role: string;
+    createdAt: string;
+  }
+
+  interface Reservation {
+    id: number;
+    user: User;
+    totalPrice: number;
+    createdAt: string;
+    confirmationNumber: string;
+    reservationStatus: string;
+  }
+
+  const createReservation = async (
+    newReservation: NewReservation,
+  ): Promise<Reservation> => {
+    const response = await fetch('http://localhost:8080/reservation', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newReservation),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create reservation');
+    }
+
+    return response.json();
+  };
+
+  const mutation = useMutation({
+    mutationFn: createReservation,
+    onSuccess: (data) => {
+      goToConfirmation({
+        location: officeName,
+        fromDate,
+        toDate,
+        resources,
+        confirmationNumber: data.confirmationNumber,
+        reservationStatus: data.reservationStatus,
+      });
+    },
+  });
+
   return (
-    <div className="min-h-screen bg-white">
-      <section
-        className="relative pt-20 pb-16 overflow-hidden"
-        style={{ backgroundColor: '#E4EDEC80' }}
-      >
-        <div className="absolute inset-0 opacity-5">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            }}
-          />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-6 relative">
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center mb-8">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                <svg
-                  className="w-8 h-8 text-green-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-            </div>
-
-            <h1 className="text-5xl md:text-7xl font-light text-gray-900 mb-6 tracking-tight">
-              Booking Confirmed
-            </h1>
-            <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-8">
-              Your workspace reservation has been successfully confirmed. We're
-              excited to welcome you!
-            </p>
-
-            <div className="inline-flex items-center px-6 py-3 bg-white/90 backdrop-blur-sm rounded-full text-lg font-medium text-gray-900 border border-white/30 shadow-sm">
-              Confirmation #{bookingDetails.confirmationNumber}
-            </div>
-
-            <div className="w-16 h-1 bg-gray-900 mx-auto rounded-full opacity-20 mt-8"></div>
-          </div>
-        </div>
-      </section>
-
+    <div>
       <section className="py-20">
         <div className="max-w-4xl mx-auto px-6">
           <Card
@@ -230,70 +285,31 @@ export default function BookingConfirmation() {
               ]}
               total={totalCost}
               className="mb-8"
+              showBadge={false}
             />
-
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8">
-              <h3 className="text-lg font-medium text-blue-900 mb-3">
-                What's Next?
-              </h3>
-              <ul className="space-y-2 text-blue-800">
-                <li className="flex items-center">
-                  <svg
-                    className="w-5 h-5 text-blue-600 mr-3"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  You'll receive a confirmation email with access details
-                </li>
-                <li className="flex items-center">
-                  <svg
-                    className="w-5 h-5 text-blue-600 mr-3"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Your access card will be ready for pickup
-                </li>
-                <li className="flex items-center">
-                  <svg
-                    className="w-5 h-5 text-blue-600 mr-3"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Welcome orientation will be scheduled
-                </li>
-              </ul>
-            </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={() => (window.location.href = '/')}
+                onClick={() =>
+                  mutation.mutate({
+                    username,
+                    totalPrice: totalCost,
+                    deskId: 4,
+                    startDate: fromDate,
+                    endDate: toDate,
+                    // resourceIds: (resources || []).map(resource => parseInt(resource.id)),
+                    resourceIds: [1],
+                  })
+                }
                 className="bg-gray-900 text-white px-8 py-3 rounded-full hover:bg-gray-800 transition-colors font-medium"
               >
-                Return to Home
+                Confirm Reservation
               </button>
               <button
-                onClick={() => window.print()}
+                onClick={handleCancelConfirm}
                 className="bg-white text-gray-900 border border-gray-300 px-8 py-3 rounded-full hover:bg-gray-50 transition-colors font-medium"
               >
-                Print Confirmation
+                Cancel Confirmation
               </button>
             </div>
           </Card>
