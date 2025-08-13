@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import type { Reservation } from '@/type/reservation';
+import type { ReservationResponseDTO } from '@/type/reservation';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   fetchAllReservation,
-  fetchReservationByUserId,
+  fetchReservationsByAuthUserId,
 } from '@/services/reservationService';
 
 const ReservationPage: React.FC = () => {
-  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [reservations, setReservations] = useState<ReservationResponseDTO[]>(
+    [],
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
@@ -18,12 +20,13 @@ const ReservationPage: React.FC = () => {
   console.log(user);
 
   useEffect(() => {
+    if (!user?.id) return;
     async function fetchAllReservations() {
       try {
         setLoading(true);
 
         const data = isPrivate
-          ? await fetchReservationByUserId(Number(2))
+          ? await fetchReservationsByAuthUserId(user?.id || '')
           : await fetchAllReservation();
         console.log('Fetched billing data:', data);
         setReservations(data);
@@ -39,16 +42,16 @@ const ReservationPage: React.FC = () => {
       }
     }
     fetchAllReservations();
-  }, [isPrivate]);
+  }, [user, isPrivate]);
 
   const filteredReservations = reservations.filter((reservation) => {
     const afterStartDate =
-      !reservation.deskReservation.startDate ||
-      new Date(startDate) >= new Date(reservation.deskReservation.startDate);
+      !reservation.startDate ||
+      new Date(startDate) >= new Date(reservation.startDate);
 
     const beforeEndDate =
-      !reservation.deskReservation.endDate ||
-      new Date(endDate) <= new Date(reservation.deskReservation.endDate);
+      !reservation.endDate ||
+      new Date(endDate) <= new Date(reservation.endDate);
 
     return afterStartDate && beforeEndDate;
   });
@@ -144,11 +147,11 @@ const ReservationPage: React.FC = () => {
                     </p>
                     <p>
                       <span className="font-medium">Open to public</span>{' '}
-                      {t?.isPrivate === true ? 'Yes' : 'No'}
+                      {t?.private === true ? 'Yes' : 'No'}
                     </p>
                     <p>
                       <span className="font-medium">Description:</span>{' '}
-                      {t?.deskReservation.desk.description ?? 'No description'}
+                      {t?.description ?? 'No description'}
                     </p>
                   </div>
                 </li>

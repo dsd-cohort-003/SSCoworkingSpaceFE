@@ -18,11 +18,11 @@ import type { RootState } from '@/store/store';
 type SortOption = 'price-asc' | 'price-desc' | 'name';
 
 export default function ChooseResources() {
-  const { goToBilling, goToConfirmReservation } = useBookingFlow();
+  const { goToBilling /*, goToConfirmReservation*/ } = useBookingFlow();
   const reservation = useSelector(
     (state: RootState) => state.officeReservation.resInfo,
   );
-  console.log(reservation);
+  console.log('reservation data: ', reservation);
   // const { goToConfirmation } = useBookingFlow();
   const location = useLocation();
   const bookingData = (location.state as {
@@ -34,9 +34,11 @@ export default function ChooseResources() {
     fromDate: '',
     toDate: '',
   };
+  console.log('location state:', location.state);
+  console.log('booking data:', bookingData);
   const officeName = bookingData.location;
-  const fromDate = bookingData.fromDate;
-  const toDate = bookingData.toDate;
+  const fromDate = reservation.startDate;
+  const toDate = reservation.endDate;
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -49,26 +51,6 @@ export default function ChooseResources() {
 
   useEffect(() => {
     fetchAllResources().then((resources) => {
-      // resources
-      //   .filter((resource) => {
-      //     const matchesSearch =
-      //       resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      //       resource.description.toLowerCase().includes(searchTerm.toLowerCase());
-      //     const matchesCategory =
-      //       selectedCategory === 'all' || resource.category === selectedCategory;
-      //     return matchesSearch && matchesCategory;
-      //   })
-      //   .sort((a, b) => {
-      //     switch (sortBy) {
-      //       case 'price-asc':
-      //         return a.price - b.price;
-      //       case 'price-desc':
-      //         return b.price - a.price;
-      //       case 'name':
-      //       default:
-      //         return a.name.localeCompare(b.name);
-      //     }
-      //   });
       setFilteredResources(resources);
     });
   }, []);
@@ -110,48 +92,49 @@ export default function ChooseResources() {
   };
 
   const handleConfirmRequest = () => {
+    console.log(bookingData);
     // Submit reservation
-    const reservation: ReservationDTO = {
+    const reservationDTO: ReservationDTO = {
       authUserId: user?.id || '', // empty if no user
       totalPrice: 1, // TODO - calculate total price based on cart
       deskReservation: {
         id: 1, // TODO - fetch actual desk ID
-        startDate: new Date(fromDate),
-        endDate: new Date(toDate),
+        startDate: fromDate,
+        endDate: toDate,
       } as DeskReservationDTO,
       resourceReservations: cart.map((item) => ({
         id: item.id, // TODO - implement fetching resource's ID once they are no longer hardcoded
         quantity: item.quantity,
-        startDate: new Date(fromDate),
-        endDate: new Date(toDate),
+        startDate: fromDate,
+        endDate: toDate,
       })) as ResourceReservationDTO[],
       description: '',
     };
     // Submit reservation request
-    submitReservation(reservation).then((res: Reservation) => {
+    submitReservation(reservationDTO).then((res: Reservation) => {
       // Submit/generate bill
       createBilling(res.id);
       // Redirect to billing page
       goToBilling({
         location: officeName,
-        fromDate,
-        toDate,
+        fromDate: fromDate?.toString(),
+        toDate: toDate?.toString(),
         resources: cart,
       });
       // TODO move
-      goToConfirmReservation({
-        location: officeName,
-        fromDate,
-        toDate,
-        resources: cart,
-      });
-
-      // goToConfirmation({
+      // goToConfirmReservation({
       //   location: officeName,
       //   fromDate,
       //   toDate,
       //   resources: cart,
       // });
+
+      goToConfirmation({
+        location: officeName,
+        fromDate,
+        toDate,
+        resources: cart,
+      });
     });
   };
 

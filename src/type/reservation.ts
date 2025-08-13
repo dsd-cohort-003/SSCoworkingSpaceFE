@@ -26,3 +26,16 @@ export interface ReservationDTO {
   isPrivate?: boolean;
   description: string;
 }
+
+export interface ReservationResponseDTO {
+  id: number;
+  user: User;
+  totalPrice: number;
+  createdAt: Date;
+  confirmationNumber: number;
+  description: string;
+  reservationStatus: string;
+  startDate: Date;
+  endDate: Date;
+  private: boolean;
+}
