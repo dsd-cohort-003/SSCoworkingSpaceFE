@@ -18,6 +18,7 @@ import ProtectedRoute from './routes/ProtectedRoute.tsx';
 import { fetchUserByAuthId } from './services/userService.tsx';
 import { useEffect, useState } from 'react';
 import ConfirmBooking from './routes/booking/ConfirmBooking.tsx';
+import ReservationPage from './page/reservationPage.tsx';
 
 import { store } from './store/store.ts';
 import { Provider } from 'react-redux';
@@ -69,6 +70,7 @@ function AppRoutes() {
         </Route>
         <Route path="maintenance" element={<MaintenanceTicketing />} />
         <Route path="/maintenance/edit/:id" element={<MaintenanceEdit />} />
+        <Route path="reservations" element={<ReservationPage />} />
         <Route
           path="/maintenance/dashboard"
           element={
