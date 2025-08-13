@@ -15,6 +15,7 @@ import MaintenanceDashboard from './page/MaintenanceDashboard.tsx';
 import MaintenanceEdit from './page/MaintenanceEdit.tsx';
 import Thanks from './routes/booking/Thanks.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import ReservationPage from './page/reservationPage.tsx';
 
 function App() {
   const queryClient = new QueryClient();
@@ -40,6 +41,7 @@ function App() {
             />
             <Route path="resources" element={<Resources />} />
             <Route path="billing" element={<BillingPage />} />
+            <Route path="reservations" element={<ReservationPage />} />
             <Route
               path="payment-confirmation"
               element={<PaymentConfirmation />}

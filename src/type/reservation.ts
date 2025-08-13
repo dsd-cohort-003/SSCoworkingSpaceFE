@@ -7,6 +7,10 @@ export interface Reservation {
   user: User;
   totalPrice: number;
   createdAt: string;
+  description: string;
+  isPrivate: boolean;
+  startDate: string;
+  endDate: string;
   confirmationNumber: string;
   reservationStatus: string;
   deskReservation: DeskReservation;
