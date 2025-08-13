@@ -11,8 +11,8 @@ export const useBookingState = () => {
   const [toDate, setToDate] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
 
-  const isValidBooking = fromDate && toDate;
-
+  const isValidBooking =
+    fromDate && toDate && new Date(fromDate) < new Date(toDate);
   const isValidDateRange = () => {
     if (!fromDate || !toDate) return false;
     return new Date(toDate) >= new Date(fromDate);
