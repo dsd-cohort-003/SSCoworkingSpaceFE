@@ -12,11 +12,19 @@ import { createBilling } from '@/services/billingService';
 import { useAuth } from '@/contexts/AuthContext';
 import type { CartItem, Resource } from '@/type/resource';
 import { fetchAllResources } from '@/services/resourceService';
+import { useSelector } from 'react-redux';
+
+import type { RootState } from '@/store/store';
 
 type SortOption = 'price-asc' | 'price-desc' | 'name';
 
 export default function ChooseResources() {
   const { goToBilling } = useBookingFlow();
+  const reservation = useSelector(
+    (state: RootState) => state.officeReservation.resInfo,
+  );
+  console.log(reservation);
+  // const { goToConfirmation } = useBookingFlow();
   const location = useLocation();
   const bookingData = (location.state as {
     location: string;

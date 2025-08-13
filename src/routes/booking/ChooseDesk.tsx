@@ -6,11 +6,26 @@ import Card from '@/components/ui/card';
 import { useBookingState } from '@/hooks/useBookingState';
 import { useBookingFlow } from '@/hooks/useBookingFlow';
 import { LABELS } from '@/constants/labels';
+import useOfficesDesks from '@/hooks/useOfficesDesks';
+import { useParams } from 'react-router';
+import DeskCard from '@/components/booking/DeskCard';
+import { useDispatch } from 'react-redux';
+import { setOffice, setReservation } from '@/store/slices/officeSlice';
+import { useLocationQuery } from '@/hooks/useLocationQuery';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/store/store';
 
 function ChooseDesk() {
+  const { locations } = useLocationQuery();
+  const officeId = Number(useParams().officeId);
+  const { desks, isLoading, isError } = useOfficesDesks(officeId);
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const { getCurrentLocationState } = useBookingFlow();
+
   const {
     fromDate,
     toDate,
@@ -24,13 +39,16 @@ function ChooseDesk() {
   const [dateDisplay, setDateDisplay] = useState(new Date());
 
   const locationState = getCurrentLocationState();
-  const officeName = locationState?.location || 'Office';
 
+  const reservation = useSelector(
+    (state: RootState) => state.officeReservation.resInfo,
+  );
+
+  const officeName = locationState?.location || 'Office';
   const handleConfirmRequest = () => {
     if (isValidBooking) {
-      navigate('/booking/resources', {
-        state: { location: officeName, fromDate, toDate },
-      });
+      dispatch(setReservation({ fromDate, toDate }));
+      navigate('/booking/resources');
     }
   };
 
@@ -72,6 +90,14 @@ function ChooseDesk() {
     1,
   ).getDay();
 
+  useEffect(() => {
+    if (locations.length > 0) {
+      const fetchedOffice = locations.find((loc) => loc.id === officeId);
+      if (fetchedOffice?.id !== reservation.resOffice?.id) {
+        dispatch(setOffice(fetchedOffice || null));
+      }
+    }
+  }, [locations, officeId, reservation.resOffice?.id, dispatch]);
   return (
     <div className="min-h-screen bg-white">
       <HeroSection
@@ -233,7 +259,6 @@ function ChooseDesk() {
                 </div>
               </Card>
             </div>
-
             <div className="lg:col-span-1">
               <div className="sticky top-8">
                 <BookingSummary
@@ -245,7 +270,17 @@ function ChooseDesk() {
                 />
               </div>
             </div>
+            <div className="lg:col-span-4"></div>
           </div>
+          {isValidBooking &&
+            desks.map((desk) => (
+              <DeskCard
+                key={desk.id}
+                officeDesk={desk}
+                isLoading={isLoading}
+                isError={isError}
+              />
+            ))}
         </div>
       </section>
     </div>

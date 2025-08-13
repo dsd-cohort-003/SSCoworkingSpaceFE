@@ -18,15 +18,19 @@ import ProtectedRoute from './routes/ProtectedRoute.tsx';
 import { fetchUserByAuthId } from './services/userService.tsx';
 import { useEffect, useState } from 'react';
 
+import { store } from './store/store.ts';
+import { Provider } from 'react-redux';
 function App() {
   const queryClient = new QueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
-    </QueryClientProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </QueryClientProvider>
+    </Provider>
   );
 }
 
