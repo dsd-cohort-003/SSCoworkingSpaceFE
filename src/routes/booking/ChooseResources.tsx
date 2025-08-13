@@ -13,7 +13,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import type { CartItem, Resource } from '@/type/resource';
 import { fetchAllResources } from '@/services/resourceService';
 import { useSelector } from 'react-redux';
-
 import type { RootState } from '@/store/store';
 
 type SortOption = 'price-asc' | 'price-desc' | 'name';
