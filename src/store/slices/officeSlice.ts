@@ -9,6 +9,18 @@ const initialState: officeReservationState = {
     endDate: null,
     resDesks: [],
     resOffice: null,
+    resResources: [
+      // {
+      //   id: 0,
+      //   type: '',
+      //   description: '',
+      //   price: 0,
+      //   name: '',
+      //   category: '',
+      //   summary: '',
+      //   officeId: 0,
+      // },
+    ],
   },
 };
 const officeReservationSlice = createSlice({
@@ -17,7 +29,9 @@ const officeReservationSlice = createSlice({
   reducers: {
     setTotal(state) {
       state.resInfo.total =
-        state.resInfo.desksTotal + state.resInfo.officeTotal;
+        state.resInfo.desksTotal +
+        state.resInfo.officeTotal +
+        state.resInfo.desksTotal;
     },
     setOffice(state, action: { payload: LocationData | null }) {
       state.resInfo.resOffice = action.payload;
@@ -57,6 +71,21 @@ const officeReservationSlice = createSlice({
         state.resInfo.endDate = action.payload.toDate;
       }
     },
+    setResources(state, action) {
+      state.resInfo.resResources.push(action.payload);
+      state.resInfo.total += action.payload.price;
+    },
+    removeResource(state, action: { payload: number }) {
+      const resourceId = action.payload;
+      const idx = state.resInfo.resResources.findIndex(
+        (resource) => resource.id === resourceId,
+      );
+      if (idx !== -1) {
+        const removedResource = state.resInfo.resResources[idx];
+        state.resInfo.resResources.splice(idx, 1);
+        state.resInfo.total -= removedResource.price;
+      }
+    },
   },
 });
 export const {
@@ -66,5 +95,7 @@ export const {
   setOfficeTotal,
   setReservation,
   setOffice,
+  setResources,
+  removeResource,
 } = officeReservationSlice.actions;
 export default officeReservationSlice.reducer;

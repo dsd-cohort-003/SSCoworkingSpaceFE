@@ -2,20 +2,26 @@ import { useLocation } from 'react-router-dom';
 import type { BookingData } from '@/hooks/useBookingFlow';
 import Card from '@/components/ui/card';
 import PriceBreakdown from '@/components/ui/PriceBreakdown';
-
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/store/store';
 export default function BookingConfirmation() {
   const location = useLocation();
+  const { total, resOffice, startDate, endDate } = useSelector(
+    (state: RootState) => {
+      return state.officeReservation.resInfo;
+    },
+  );
+  const name = resOffice?.name ?? '';
   const bookingData = (location.state as BookingData) || {
-    location: 'Office',
-    fromDate: '',
-    toDate: '',
+    location: name,
+    fromDate: startDate,
+    toDate: endDate,
     resources: [],
   };
 
   const bookingDetails = {
     ...bookingData,
-    //confirmationNumber: `SS${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-    confirmationNumber: location.state.confirmationNumber,
+    confirmationNumber: `SS${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
   };
 
   const getDurationInDays = () => {
@@ -32,7 +38,7 @@ export default function BookingConfirmation() {
     (total, resource) => total + resource.price * resource.quantity * duration,
     0,
   );
-  const totalCost = workspaceCost + resourcesCost;
+  // const totalCost = workspaceCost + resourcesCost;
 
   return (
     <div className="min-h-screen bg-white">
@@ -108,12 +114,7 @@ export default function BookingConfirmation() {
                         {bookingDetails.location}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                      <span className="text-gray-500">Type</span>
-                      <span className="text-gray-900 font-medium">
-                        Dedicated Desk
-                      </span>
-                    </div>
+
                     <div className="flex items-center justify-between py-2">
                       <span className="text-gray-500">Access</span>
                       <span className="text-gray-900 font-medium">24/7</span>
@@ -228,7 +229,7 @@ export default function BookingConfirmation() {
                     ]
                   : []),
               ]}
-              total={totalCost}
+              total={total}
               className="mb-8"
             />
 

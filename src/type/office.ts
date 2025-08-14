@@ -1,3 +1,5 @@
+import type { ResResource } from './resource';
+
 export interface LocationData {
   id: number;
   name: string;
@@ -34,6 +36,7 @@ interface ReservationInfo {
   endDate: Date | null;
   resDesks: DeskData[];
   resOffice: LocationData | null;
+  resResources: ResResource[];
 }
 export interface officeReservationState {
   resInfo: ReservationInfo;
