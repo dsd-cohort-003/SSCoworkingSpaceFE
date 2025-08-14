@@ -38,7 +38,7 @@ const ReservationPage: React.FC = () => {
       }
     }
     fetchAllReservations();
-  }, [isPrivate]);
+  }, [user, isPrivate]);
 
   const filteredReservations = reservations.filter((reservation) => {
     const resStart = new Date(reservation.startDate);
@@ -128,13 +128,15 @@ const ReservationPage: React.FC = () => {
                 <span className="text-sm font-medium text-gray-700 mb-1">
                   Visibility
                 </span>
-                <button
-                  type="button"
+                <select
+                  id="visibility"
                   className="px-4 py-2 rounded-full bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors"
-                  onClick={() => setIsPrivate((prev) => !prev)}
+                  value={isPrivate ? 'private' : 'public'}
+                  onChange={(e) => setIsPrivate(e.target.value === 'private')}
                 >
-                  {isPrivate ? 'Private' : 'Public'}
-                </button>
+                  <option value="public">Public Reservations</option>
+                  <option value="private">My Reservations</option>
+                </select>
               </div>
             </div>
           </div>

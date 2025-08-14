@@ -13,6 +13,7 @@ export interface Reservation {
   confirmationNumber: string;
   reservationStatus: string;
   isPrivate?: boolean;
+  description: string;
   deskReservation: DeskReservation;
   resourceReservations: ResourceReservation[];
 }
