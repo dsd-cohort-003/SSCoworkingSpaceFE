@@ -12,6 +12,7 @@ export const LABELS = {
     CONTACT: 'Contact',
     OFFICE_SPACE: 'Office Space',
     RESERVE_DESK: 'Reserve a desk',
+    VIEW_RESERVATIONS: 'View Reservations',
     RESERVE_RESOURCES: 'Reserve Resource',
     RETURN_RESOURCES: 'Return Resources',
     MAINTENANCE: 'Request Maintenance',
