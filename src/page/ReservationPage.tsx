@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import type { ReservationResponseDTO } from '@/type/reservation';
 import { useAuth } from '@/contexts/AuthContext';
 import {
-  fetchAllReservation,
+  fetchPublicReservation,
   fetchReservationsByAuthUserId,
 } from '@/services/reservationService';
 
@@ -17,18 +17,14 @@ const ReservationPage: React.FC = () => {
   const [endDate, setEndDate] = useState('');
   const { user } = useAuth();
 
-  console.log(user);
-
   useEffect(() => {
-    if (!user?.id) return;
     async function fetchAllReservations() {
       try {
         setLoading(true);
-
         const data = isPrivate
           ? await fetchReservationsByAuthUserId(user?.id || '')
-          : await fetchAllReservation();
-        console.log('Fetched billing data:', data);
+          : await fetchPublicReservation();
+        console.log('Fetched reservation data:', data);
         setReservations(data);
       } catch (e: unknown) {
         if (e instanceof Error) {
@@ -42,21 +38,22 @@ const ReservationPage: React.FC = () => {
       }
     }
     fetchAllReservations();
-  }, [user, isPrivate]);
+  }, [isPrivate]);
 
   const filteredReservations = reservations.filter((reservation) => {
-    const afterStartDate =
-      !reservation.startDate ||
-      new Date(startDate) >= new Date(reservation.startDate);
+    const resStart = new Date(reservation.startDate);
+    const resEnd = new Date(reservation.endDate);
 
-    const beforeEndDate =
-      !reservation.endDate ||
-      new Date(endDate) <= new Date(reservation.endDate);
+    if (startDate && endDate) {
+      return new Date(startDate) >= resStart && new Date(endDate) <= resEnd;
+    }
 
-    return afterStartDate && beforeEndDate;
+    const filterDate = new Date(startDate || endDate);
+    return (
+      (!startDate && !endDate) ||
+      (filterDate >= resStart && filterDate <= resEnd)
+    );
   });
-
-  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="min-h-screen bg-white">
@@ -86,7 +83,17 @@ const ReservationPage: React.FC = () => {
                   type="date"
                   id="startDate"
                   value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
+                  onChange={(e) => {
+                    if (
+                      endDate &&
+                      new Date(e.target.value) > new Date(endDate)
+                    ) {
+                      setStartDate(startDate);
+                      setEndDate(e.target.value);
+                    } else {
+                      setStartDate(e.target.value);
+                    }
+                  }}
                   className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-gray-900 focus:outline-none"
                 />
               </div>
@@ -102,7 +109,17 @@ const ReservationPage: React.FC = () => {
                   type="date"
                   id="endDate"
                   value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
+                  onChange={(e) => {
+                    if (
+                      startDate &&
+                      new Date(e.target.value) < new Date(startDate)
+                    ) {
+                      setEndDate(startDate);
+                      setStartDate(e.target.value);
+                    } else {
+                      setEndDate(e.target.value);
+                    }
+                  }}
                   className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-gray-900 focus:outline-none"
                 />
               </div>
@@ -123,35 +140,49 @@ const ReservationPage: React.FC = () => {
           </div>
           <h2 className="text-xl font-semibold mt-10 mb-4">Reservations</h2>
 
-          {filteredReservations?.length === 0 ? (
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+            </div>
+          ) : filteredReservations?.length === 0 ? (
             <p className="text-gray-500 italic">No reservations available.</p>
           ) : (
-            <ul className="space-y-3">
-              {filteredReservations?.map((t) => (
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+              {filteredReservations?.map((r) => (
                 <li
-                  key={t?.id}
-                  className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row sm:justify-between sm:items-center"
+                  key={r?.id}
+                  className="bg-white border border-gray-200 rounded-2xl p-6 shadow-md hover:shadow-xl transition-shadow flex flex-col"
                 >
-                  <div className="text-sm text-gray-700 space-y-1">
+                  <div className="flex justify-between items-start mb-4">
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      {r?.user?.username ?? 'Unknown'}
+                    </h2>
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        r?.private
+                          ? 'bg-red-100 text-red-700'
+                          : 'bg-green-100 text-green-700'
+                      }`}
+                    >
+                      {r?.private ? 'Private' : 'Public'}
+                    </span>
+                  </div>
+
+                  <div className="text-sm text-gray-600 mb-4 space-y-1">
                     <p>
-                      <span className="font-medium">User:</span>{' '}
-                      {t?.user?.username ?? 'Unknown'}
+                      <span className="font-medium">Start:</span>{' '}
+                      {r?.startDate?.toString() ?? 'Unknown'}
                     </p>
                     <p>
-                      <span className="font-medium">Start Date:</span>{' '}
-                      {t?.createdAt.toString() ?? 'Unknown'}
+                      <span className="font-medium">End:</span>{' '}
+                      {r?.endDate?.toString() ?? 'Unknown'}
                     </p>
-                    <p>
-                      <span className="font-medium">End Date:</span>{' '}
-                      {t?.createdAt.toString() ?? 'Unknown'}
-                    </p>
-                    <p>
-                      <span className="font-medium">Open to public</span>{' '}
-                      {t?.private === true ? 'Yes' : 'No'}
-                    </p>
-                    <p>
-                      <span className="font-medium">Description:</span>{' '}
-                      {t?.description ?? 'No description'}
+                  </div>
+
+                  <div className="text-gray-700 text-sm mt-auto">
+                    <p className="font-medium mb-1">Description:</p>
+                    <p className="text-gray-600 line-clamp-4">
+                      {r?.description ?? 'No description'}
                     </p>
                   </div>
                 </li>

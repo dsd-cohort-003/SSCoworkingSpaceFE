@@ -26,6 +26,14 @@ export async function fetchAllReservation(): Promise<ReservationResponseDTO[]> {
   return res.json();
 }
 
+export async function fetchPublicReservation(): Promise<
+  ReservationResponseDTO[]
+> {
+  const res = await fetch(`${BASE_URL}/public`);
+  if (!res.ok) throw new Error('Failed to fetch Reservation');
+  return res.json();
+}
+
 export async function fetchReservationByUserId(
   id: number,
 ): Promise<ReservationResponseDTO[]> {
