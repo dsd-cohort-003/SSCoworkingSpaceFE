@@ -52,6 +52,13 @@ export default function Header() {
           {LABELS.NAVIGATION.RESERVE_DESK}
         </button>
 
+        <button
+          onClick={() => handleNavigate('/reservations')}
+          className="text-gray-600 hover:text-gray-900 transition-colors font-medium text-left cursor-pointer"
+        >
+          {LABELS.NAVIGATION.VIEW_RESERVATIONS}
+        </button>
+
         {isAuthenticated ? (
           <>
             <button
