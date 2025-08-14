@@ -6,7 +6,7 @@ import Card from '@/components/ui/card';
 import { LABELS } from '@/constants/labels';
 import { submitReservation } from '@/services/reservationService';
 import type { ResourceReservationDTO } from '@/type/resourceReservation';
-import type { Reservation, ReservationDTO } from '@/type/reservation';
+import type { ReservationDTO } from '@/type/reservation';
 import type { DeskReservationDTO } from '@/type/deskReservation';
 import { createBilling } from '@/services/billingService';
 import { useAuth } from '@/contexts/AuthContext';
@@ -91,7 +91,7 @@ export default function ChooseResources() {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
-  const handleConfirmRequest = () => {
+  const handleConfirmRequest = async () => {
     console.log(bookingData);
     // Submit reservation
     const reservationDTO: ReservationDTO = {
@@ -110,31 +110,31 @@ export default function ChooseResources() {
       })) as ResourceReservationDTO[],
       description: '',
     };
-    // Submit reservation request
-    submitReservation(reservationDTO).then((res: Reservation) => {
-      // Submit/generate bill
-      createBilling(res.id);
-      // Redirect to billing page
-      goToBilling({
-        location: officeName,
-        fromDate: fromDate?.toString(),
-        toDate: toDate?.toString(),
-        resources: cart,
-      });
-      // TODO move
-      // goToConfirmReservation({
-      //   location: officeName,
-      //   fromDate,
-      //   toDate,
-      //   resources: cart,
-      // });
 
-      goToConfirmation({
-        location: officeName,
-        fromDate,
-        toDate,
-        resources: cart,
-      });
+    // Submit reservation request
+    const res = await submitReservation(reservationDTO);
+    // Submit/generate bill
+    await createBilling(res.id);
+    // Redirect to billing page
+    goToBilling({
+      location: officeName,
+      fromDate: fromDate?.toString(),
+      toDate: toDate?.toString(),
+      resources: cart,
+    });
+    // TODO move
+    // goToConfirmReservation({
+    //   location: officeName,
+    //   fromDate,
+    //   toDate,
+    //   resources: cart,
+    // });
+
+    goToConfirmation({
+      location: officeName,
+      fromDate,
+      toDate,
+      resources: cart,
     });
   };
 
